@@ -1,0 +1,60 @@
+{
+  "slug": "GPrackmodules",
+  "name": "GPrackmodules",
+  "version": "2.0.0",
+  "license": "GPL-3.0-or-later",
+  "brand": "GP",
+  "author": "GP",
+  "authorEmail": "",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "AB4",
+      "name": "AB4",
+      "description": "4 Channel A/B Switcher",
+      "tags": ["Switch",
+        "Switch",
+        "Utility",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "ChainMixerChannel",
+      "name": "Chained Mixer Channel",
+      "description": "Channel Strip for Chained Mixer",
+      "tags": [
+        "Mixer"
+      ]
+    },
+    {
+      "slug": "ChainMixerMaster",
+      "name": "Chained Mixer Master Section",
+      "description": "Master section for Chained Mixer",
+      "tags": [
+        "Mixer"
+      ]
+    },
+    {
+      "slug": "ChainMixerAux",
+      "name": "Chained Mixer Aux Section",
+      "description": "Aux section for Chained Mixer",
+      "tags": [
+        "Mixer"
+      ]
+    },
+    {
+      "slug": "StereoChorus",
+      "name": "Stereo Chorus",
+      "description": "Stereo Chorus with up to four voices",
+      "tags": [
+        "Chorus",
+        "Effect"
+      ]
+    }
+  ]
+}
