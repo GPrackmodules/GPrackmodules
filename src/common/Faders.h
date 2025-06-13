@@ -38,7 +38,7 @@ struct SendQuantity : public ParamQuantity
 };
 
 
-struct GPaudioFader : public SvgSlider
+class GPaudioFader : public SvgSlider
 {
 protected:
 	enum class FaderLength : int

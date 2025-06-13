@@ -28,6 +28,13 @@ ChainMixerMasterModule::ChainMixerMasterModule() :
 	configOutput(OutputR, "Input Rught");
 }
 
+void ChainMixerMasterModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
+{
+	m_fadeMain.SetSamplerate(e.sampleRate);
+	m_fadeAux1.SetSamplerate(e.sampleRate);
+	m_fadeAux1.SetSamplerate(e.sampleRate);
+}
+
 void ChainMixerMasterModule::process(const ProcessArgs& args) /*override*/
 {
 	bool bWasDisabled = Disabled();

@@ -41,7 +41,8 @@ public:
 	ChainMixerChannelModule();
 
 public:
-	void setSampleRate(float fSamplerate);
+	//void SetSampleRate(float fSamplerate);
+	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void process(const ProcessArgs& args) override;
 	void SetWidget(struct ChainMixerChannelWidget* pWidget) { m_pWidget = pWidget; }
 	bool Disabled() const override { return TypeInstance() > MAX_CHAINMIXER_CHANNELS; }
@@ -60,7 +61,7 @@ private:
 	struct ChainMixerChannelWidget* m_pWidget = nullptr;
 	bool m_bInitialized = false;
 
-	bool m_bFadersAndKnowInitialized = false;
+	bool m_bFadesInitialized = false;
 	float m_fParamGain = 0.0f;
 
 	float m_fFaderFactor = 0.0f;				// fader only

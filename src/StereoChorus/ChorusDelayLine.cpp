@@ -5,23 +5,13 @@
 #endif
 
 
-ChorusDelayLine::ChorusDelayLine(float dSamplerate, int nChannels, float dMaxDelayS) :
-	m_fSamplerate(dSamplerate),
+ChorusDelayLine::ChorusDelayLine(float fSamplerate, int nChannels, float dMaxDelayS) :
 	m_nChannels(nChannels),
 	m_fMaxDelayS(dMaxDelayS),
-	m_nMaxDelaySamples(static_cast<int>(m_fMaxDelayS * m_fSamplerate) + 1)
+	m_fSamplerate(fSamplerate)
 {
-	printf("Samplerate %lf, MaxDelay %lf sec, %d MaxDelaySamples\n", dSamplerate, dMaxDelayS, m_nMaxDelaySamples);
-
-	// create the delay lines
-	m_ppDelayLines = new float*[nChannels];
-	for (int nChannel = 0; nChannel < nChannels; ++nChannel)
-	{
-		m_ppDelayLines[nChannel] = new float[m_nMaxDelaySamples + MaxTaps() + 1]; // delay line allows placing FIR anywhere up MaxDelaySamples - 1
-		memset(m_ppDelayLines[nChannel], 0, (m_nMaxDelaySamples + MaxTaps() + 1) * sizeof(float));
-	}
-	BuildIRs();
-	Advance();
+	// printf("Samplerate %lf, MaxDelay %lf sec, %d MaxDelaySamples\n", fSamplerate, dMaxDelayS, m_nMaxDelaySamples);
+	UpdateSamplerate(fSamplerate);
 }
 
 ChorusDelayLine::~ChorusDelayLine()
@@ -86,14 +76,32 @@ void ChorusDelayLine::Advance()
 {
 	if (++m_nWriteIndex >= m_nMaxDelaySamples)
 		m_nWriteIndex = 0;
-	// feed zeros in casde none ever calls Feed()
-	m_ppDelayLines[0][m_nWriteIndex] = 0.0f;
-	m_ppDelayLines[1][m_nWriteIndex] = 0.0f;
-	if (m_nWriteIndex >= 0 && m_nWriteIndex < N_TAPS)
+}
+
+void ChorusDelayLine::UpdateSamplerate(float fSamplerate)
+{
+	printf("New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
+
+	m_fSamplerate = fSamplerate;
+	m_nMaxDelaySamples = static_cast<int>(m_fMaxDelayS * m_fSamplerate) + 1;
+	printf("MAX delay samples %d\n", m_nMaxDelaySamples);
+
+	if (m_ppDelayLines != nullptr)
 	{
-		m_ppDelayLines[0][m_nWriteIndex + m_nMaxDelaySamples] = 0.0f;
-		m_ppDelayLines[1][m_nWriteIndex + m_nMaxDelaySamples] = 0.0f;
+		for (int nChannel = 0; nChannel < m_nChannels; ++nChannel)
+			delete m_ppDelayLines[nChannel];
+		delete m_ppDelayLines;
 	}
+	// create the delay lines
+	m_ppDelayLines = new float*[m_nChannels];
+	for (int nChannel = 0; nChannel < m_nChannels; ++nChannel)
+	{
+		m_ppDelayLines[nChannel] = new float[m_nMaxDelaySamples + MaxTaps() + 1]; // delay line allows placing FIR anywhere up MaxDelaySamples - 1
+		memset(m_ppDelayLines[nChannel], 0, (m_nMaxDelaySamples + MaxTaps() + 1) * sizeof(float));
+	}
+	BuildIRs();
+	UpdateIRs();
+	DeleteOldIRs();
 }
 
 bool ChorusDelayLine::BuildIRs(float fCutoffFrequency /*= 0.45f*/)

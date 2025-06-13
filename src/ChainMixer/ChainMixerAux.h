@@ -47,6 +47,7 @@ public:
 	ChainMixerAuxModule();
 
 public:
+	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void process(const ProcessArgs& args) override;
 	void SetWidget(struct ChainMixerAuxWidget* pWidget) { m_pWidget = pWidget; }
 	bool Solo() const override { return m_AuxInfo[0].bSolo || m_AuxInfo[1].bSolo; }

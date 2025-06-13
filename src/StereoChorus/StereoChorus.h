@@ -69,6 +69,7 @@ public:
 
 public:
 	StereoChorusModule();
+	~StereoChorusModule();
 
 public:
 	void setSampleRate(float fSamplerate);
@@ -76,6 +77,7 @@ public:
 	void SetDarkMode(bool bDarkMode);
 
 	void process(const ProcessArgs& args) override;
+	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void SetWidget(struct StereoChorusWidget* pWidget) { m_pWidget = pWidget; }
 
 private:
@@ -97,6 +99,7 @@ private:
 	void CalcGainFactor();
 	void LPCutoff(float fHz);
 	void HPCutoff(float fHz);
+	void UpdateSamplerate(float fSamplerate);
 
 private:
 	struct StereoChorusWidget* m_pWidget = nullptr;

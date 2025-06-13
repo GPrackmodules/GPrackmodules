@@ -9,7 +9,7 @@ class ChorusDelayLine
 {
 public:
 public:
-	ChorusDelayLine(float dSamplerate, int nChannels, float dMaxDelayS);
+	ChorusDelayLine(float fSamplerate, int nChannels, float dMaxDelayS);
 	ChorusDelayLine(const ChorusDelayLine&) = delete;
 	~ChorusDelayLine();
 
@@ -19,6 +19,7 @@ public:
 	void Feed(float fL, float fR);
 	float Read(int nChannel, float fDelayS);
 	void Advance();
+	void UpdateSamplerate(float fSamplerate);
 
 	bool BuildIRs(float fCutoffFrequency = 0.45f);
 	void DeleteOldIRs();
@@ -33,12 +34,12 @@ private:
 	void UpdateIRs();
 
 private:
-	const float m_fSamplerate;
 	const int m_nChannels;
 	const float m_fMaxDelayS;
+	float m_fSamplerate;
 	int m_nMaxDelaySamples = 0;		// enough for MaxDelayS
 
-	float** m_ppDelayLines;			// array of float pointers to the delays lines for each channel
+	float** m_ppDelayLines = nullptr;	// array of float pointers to the delays lines for each channel
 
 	// Impulse responses and parameters currently in use
 	mutex m_mtxIRs;			// only locked briefly for IR switching

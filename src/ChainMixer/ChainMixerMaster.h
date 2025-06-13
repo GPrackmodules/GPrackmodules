@@ -31,6 +31,7 @@ public:
 	ChainMixerMasterModule();
 
 public:
+	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void process(const ProcessArgs& args) override;
 	void SetWidget(struct ChainMixerMasterWidget* pWidget) { m_pWidget = pWidget; }
 	bool Disabled() const override { return TypeInstance() > 1; }

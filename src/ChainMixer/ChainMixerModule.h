@@ -100,7 +100,6 @@ protected:
 
 private:
 	const ModuleType m_eType;
-	bool m_bDisabled = false;		// happens if motule Aux/Master modules or too many channel modules were found
 	int m_nTypeInstance = 0;		// number of identical modules to the left plus 1
 
 	bool m_bMute = false;

@@ -92,7 +92,7 @@ StereoChorusModule::StereoChorusModule() :
 	paramQuantities[ParamDepth]->snapEnabled = true;
 	configParam(ParamTone, -100.0f, 100.0f, 0.f, "Tone", "%");
 	paramQuantities[ParamTone]->snapEnabled = true;
-	configParam(ParamVoices, 1.0f, 4.0f, 2.f, "Number of Voices");
+	configParam(ParamVoices, 1.0f, 4.0f, 3.f, "Number of Voices");
 	paramQuantities[ParamVoices]->snapEnabled = true;
 	configParam(ParamWet, 0.0f, 100.0f, 50.0f, "Wet", "%");
 	paramQuantities[ParamWet]->snapEnabled = true;
@@ -105,6 +105,11 @@ StereoChorusModule::StereoChorusModule() :
 	paramQuantities[ParamCVTone]->snapEnabled = true;
 	configParam(ParamCVWet, -100.0f, 100.0f, 0.0f, "Wet CV Factor", "%");
 	paramQuantities[ParamCVWet]->snapEnabled = true;
+}
+
+StereoChorusModule::~StereoChorusModule()
+{
+	delete m_pDelayLine;
 }
 
 void StereoChorusModule::SetDarkMode(bool bDarkMode)
@@ -138,19 +143,10 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 {
 	if (!m_bInitialized)
 	{
-		m_fSamplerate = args.sampleRate;
-		m_fInvertedSamplerate = 1.0f / args.sampleRate;
-
 		delete m_pDelayLine;
 		m_pDelayLine = new ChorusDelayLine(args.sampleRate, 2, 2.5f * MAX_DELAY);
-		m_fadeGainCorrection.SetSamplerate(args.sampleRate);
-		for (int v = 0; v < STEREO_CHORUS_VOICES - 1; v++)
-			m_fadeVoices[v].SetSamplerate(args.sampleRate);
-		for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-			m_fadeDelayRanges[v].SetSamplerate(args.sampleRate);
-		m_fadeLowpass.SetSamplerate(args.sampleRate);
-		m_fadeHighpass.SetSamplerate(args.sampleRate);
-		m_fadeWet.SetSamplerate(args.sampleRate);
+		UpdateSamplerate(args.sampleRate);
+
 		HandleVoices(true);
 		HandleDepth(true);
 		HandleTone(true);
@@ -204,6 +200,7 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	}
 	else
 	{
+		m_pDelayLine->Feed(0.0f, 0.0f);
 		if (m_bHasInput)
 		{
 			// clear lights
@@ -318,7 +315,8 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 		{
 			float fOutL = 0.0f;
 			for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-				fOutL += m_pDelayLine->Read(0, (1.0f + fModulation[v][0]) * m_fDelayRanges[v]) * m_fVoiceFactors[v];
+				if (v < m_nVoices || m_fadeVoices[v].Fading())
+					fOutL += m_pDelayLine->Read(0, (1.0f + fModulation[v][0]) * m_fDelayRanges[v]) * m_fVoiceFactors[v];
 			fOutL *= m_fGainCorrection * m_fWetFactor;
 			outputs[OutputL].setVoltage(fOutL + fInL * m_fDryFactor);
 		}
@@ -326,7 +324,8 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 		{
 			float fOutR = 0.0f;
 			for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-				fOutR += m_pDelayLine->Read(1, (1.0f + fModulation[v][1]) * m_fDelayRanges[v]) * m_fVoiceFactors[v];
+				if (v < m_nVoices || m_fadeVoices[v].Fading())
+					fOutR += m_pDelayLine->Read(1, (1.0f + fModulation[v][1]) * m_fDelayRanges[v]) * m_fVoiceFactors[v];
 			fOutR *= m_fGainCorrection * m_fWetFactor;
 			outputs[OutputR].setVoltage(fOutR + fInR * m_fDryFactor);
 		}
@@ -342,6 +341,13 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	m_fadeLowpass.Advance();
 	m_fadeHighpass.Advance();
 	m_fadeWet.Advance();
+}
+
+void StereoChorusModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
+{
+	UpdateSamplerate(e.sampleRate);
+	if (m_pDelayLine != nullptr)
+		m_pDelayLine->UpdateSamplerate(e.sampleRate);
 }
 
 void StereoChorusModule::AdvanceLFO(LFO& rLFO)
@@ -514,6 +520,22 @@ void StereoChorusModule:: LPCutoff(float fHz)
 void StereoChorusModule::HPCutoff(float fHz)
 {
 	m_fadeHighpass.Start(m_fSamplerate / (M_PI * fHz));
+}
+
+void StereoChorusModule::UpdateSamplerate(float fSamplerate)
+{
+	printf("Module: New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
+	m_fSamplerate = fSamplerate;
+	m_fInvertedSamplerate = 1.0f / fSamplerate;
+
+	m_fadeGainCorrection.SetSamplerate(fSamplerate);
+	for (int v = 0; v < STEREO_CHORUS_VOICES - 1; v++)
+		m_fadeVoices[v].SetSamplerate(fSamplerate);
+	for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
+		m_fadeDelayRanges[v].SetSamplerate(fSamplerate);
+	m_fadeLowpass.SetSamplerate(fSamplerate);
+	m_fadeHighpass.SetSamplerate(fSamplerate);
+	m_fadeWet.SetSamplerate(fSamplerate);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

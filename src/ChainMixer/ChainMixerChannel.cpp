@@ -55,6 +55,15 @@ ChainMixerChannelModule::ChainMixerChannelModule() :
 	shared_ptr<Svg> pForceInitializationOfSingleton = NumberSvg(1);
 }
 
+void ChainMixerChannelModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
+{
+	m_fadeMainFader.SetSamplerate(e.sampleRate);
+	m_fadeMain.SetSamplerate(e.sampleRate);
+	m_fadeAux1.SetSamplerate(e.sampleRate);
+	m_fadeAux2.SetSamplerate(e.sampleRate);
+	m_bFadesInitialized = true;
+}
+
 void ChainMixerChannelModule::process(const ProcessArgs& args) /*override*/
 {
 	bool bWasDisabled = Disabled();
@@ -93,10 +102,9 @@ void ChainMixerChannelModule::ProcessAudioBusses(
 	bool bAnyChannelSolo,
 	struct AuxInfo rAuxInfo[2])
 {
-	if (m_bFadersAndKnowInitialized)
+	if (m_bFadesInitialized)
 	{
-		m_bFadersAndKnowInitialized = true;
-
+		m_bFadesInitialized = true;
 		m_fadeMainFader.SetSamplerate(args.sampleRate);
 		m_fadeMain.SetSamplerate(args.sampleRate);
 		m_fadeAux1.SetSamplerate(args.sampleRate);

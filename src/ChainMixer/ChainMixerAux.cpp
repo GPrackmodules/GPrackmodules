@@ -45,6 +45,13 @@ ChainMixerAuxModule::ChainMixerAuxModule() :
 	configOutput(Send2R, "AUX Send 2 Right");
 }
 
+void ChainMixerAuxModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
+{
+	m_fadeReturn1.SetSamplerate(e.sampleRate);
+	m_fadeReturn2.SetSamplerate(e.sampleRate);
+	m_bFadesInitialized = true;
+}
+
 void ChainMixerAuxModule::process(const ProcessArgs& args) /*override*/
 {
 	bool bWasDisabled = Disabled();
