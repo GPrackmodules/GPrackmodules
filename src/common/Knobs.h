@@ -16,7 +16,7 @@ protected:
 	FilledKnob(int mm);
 
 private:
-	const int m_mm;
+	// const int m_mm;
 };
 
 class PointyKnob : public RoundKnob

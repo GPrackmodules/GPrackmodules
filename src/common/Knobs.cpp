@@ -8,8 +8,7 @@
 
 #include "Knobs.h"
 
-FilledKnob::FilledKnob(int mm) :
-	m_mm(mm)
+FilledKnob::FilledKnob(int mm)
 {
 	minAngle = -0.83 * M_PI;
 	maxAngle = 0.83 * M_PI;

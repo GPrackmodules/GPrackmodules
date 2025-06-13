@@ -62,7 +62,6 @@ private:
 	bool m_bInitialized = false;
 
 	bool m_bFadesInitialized = false;
-	float m_fParamGain = 0.0f;
 
 	float m_fFaderFactor = 0.0f;				// fader only
 	float m_fMainFactors[2] = { 0.0f, 0.0f };	// fader plus pan/balance, for mixes to mono use fader factor

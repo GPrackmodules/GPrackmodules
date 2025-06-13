@@ -97,13 +97,13 @@ StereoChorusModule::StereoChorusModule() :
 	configParam(ParamWet, 0.0f, 100.0f, 50.0f, "Wet", "%");
 	paramQuantities[ParamWet]->snapEnabled = true;
 
-	configParam(ParamCVRate, -100.0f, 100.0f, 0.0f, "Rate CV Factor", "%");
+	configParam(ParamCVRate, -100.0f, 100.0f, 0.0f, "Rate CV Attenuverter", "%");
 	paramQuantities[ParamCVRate]->snapEnabled = true;
-	configParam(ParamCVDepth, -100.0f, 100.0f, 0.0f, "Depth CV Factor", "%");
+	configParam(ParamCVDepth, -100.0f, 100.0f, 0.0f, "Depth CV Attenuverter", "%");
 	paramQuantities[ParamCVDepth]->snapEnabled = true;
-	configParam(ParamCVTone, -100.0f, 100.0f, 0.0f, "Tone CV Factor", "%");
+	configParam(ParamCVTone, -100.0f, 100.0f, 0.0f, "Tone CV Attenuverter", "%");
 	paramQuantities[ParamCVTone]->snapEnabled = true;
-	configParam(ParamCVWet, -100.0f, 100.0f, 0.0f, "Wet CV Factor", "%");
+	configParam(ParamCVWet, -100.0f, 100.0f, 0.0f, "Wet CV Attenuverter", "%");
 	paramQuantities[ParamCVWet]->snapEnabled = true;
 }
 
