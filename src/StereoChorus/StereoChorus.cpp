@@ -524,7 +524,7 @@ void StereoChorusModule::HPCutoff(float fHz)
 
 void StereoChorusModule::UpdateSamplerate(float fSamplerate)
 {
-	printf("Module: New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
+	// printf("Module: New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
 	m_fSamplerate = fSamplerate;
 	m_fInvertedSamplerate = 1.0f / fSamplerate;
 

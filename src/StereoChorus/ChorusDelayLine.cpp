@@ -80,11 +80,10 @@ void ChorusDelayLine::Advance()
 
 void ChorusDelayLine::UpdateSamplerate(float fSamplerate)
 {
-	printf("New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
-
+	// printf("New samplerate %f, was %f\n", fSamplerate, m_fSamplerate);
 	m_fSamplerate = fSamplerate;
 	m_nMaxDelaySamples = static_cast<int>(m_fMaxDelayS * m_fSamplerate) + 1;
-	printf("MAX delay samples %d\n", m_nMaxDelaySamples);
+	// printf("MAX delay samples %d\n", m_nMaxDelaySamples);
 
 	if (m_ppDelayLines != nullptr)
 	{
