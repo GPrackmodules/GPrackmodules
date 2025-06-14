@@ -82,8 +82,12 @@ In this mode a 1 Hz sine wave modulation will create about +/- one
 semitone of pitch modulation, higher modulation frequencies can
 result in much higher pitch changes.
 <h2>Sample Applications</h2>
-![Stereo Chorus CV samale](StereoChorusCV.png "MIDI Modulation Wheel controlling RATE and WET, Aftertouch controlling DEPTH")
-<br>**CV Control with MIDI Modulation Wheel and Aftertouch**<br><br>
+
+![Stereo Chorus CV Sample](StereoChorusCV.png "MIDI Modulation Wheel controlling RATE and WET, Aftertouch controlling DEPTH")
 <br>
-![Stereo Chorus External Modulation Sample](StereoChorusExtMod.png "MIDI Modulation Wheel controlling RATE and WET, Aftertouch controlling DEPTH")
-<br>**External eight channel modulation using the VCV MERGE module**<br><br>
+**CV Control with MIDI Modulation Wheel and Aftertouch**
+<br>
+
+![Stereo Chorus External Modulation Sample](StereoChorusExtMod.png "Polyphonic External Modulation Cable")
+<br>
+**External eight channel modulation using the VCV MERGE module**
