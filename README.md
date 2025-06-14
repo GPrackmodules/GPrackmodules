@@ -10,7 +10,7 @@ The following modules are included:
 
 
 
-## 📥 Installation
+## 📥 Building from the Sources
 
 1. Clone this repository into your VCV Rack plugins folder:
    ```bash

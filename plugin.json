@@ -8,7 +8,7 @@
   "authorEmail" :"",
   "authorUrl": "",
   "pluginUrl": "https://github.com/GPrackmodules/GPrackmodules",
-  "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/README.md",
+  "manualUrl": "https://gprackmodules.github.io/GPrackmodules/",
   "sourceUrl": "https://github.com/GPrackmodules/GPrackmodules",
   "donateUrl": "",
   "changelogUrl": "",
@@ -17,7 +17,7 @@
       "slug": "AB4",
       "name": "AB4",
       "description": "4 Channel A/B Switcher",
-      "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/docs/AB4.md",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/AB4.html",
       "tags": ["Switch",
         "Switch",
         "Utility",
@@ -28,7 +28,7 @@
       "slug": "ChainMixerChannel",
       "name": "Chained Mixer Channel",
       "description": "Channel Strip for Chained Mixer",
-      "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/docs/ChainedMixer.md",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/ChainedMixer.html",
       "tags": [
         "Mixer"
       ]
@@ -37,7 +37,7 @@
       "slug": "ChainMixerMaster",
       "name": "Chained Mixer Master Section",
       "description": "Master section for Chained Mixer",
-      "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/docs/ChainedMixer.md",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/ChainedMixer.html",
       "tags": [
         "Mixer"
       ]
@@ -46,7 +46,7 @@
       "slug": "ChainMixerAux",
       "name": "Chained Mixer Aux Section",
       "description": "Aux section for Chained Mixer",
-      "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/docs/ChainedMixer.md",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/ChainedMixer.html",
       "tags": [
         "Mixer"
       ]
@@ -55,7 +55,7 @@
       "slug": "StereoChorus",
       "name": "Stereo Chorus",
       "description": "Stereo Chorus with up to four voices",
-      "manualUrl": "https://github.com/GPrackmodules/GPrackmodules/blob/main/docs/StereoChorus.md",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/StereoChorus.html",
       "tags": [
         "Chorus",
         "Effect"

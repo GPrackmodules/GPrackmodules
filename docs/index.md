@@ -8,14 +8,3 @@ The following modules are included:
 - [Chained Mixer](ChainedMixer.html) – Modules for a modular mixer that can be daisy chained together including Input channels, a Master section and an Aux section
 - [AB4](AB4.html) – 4 channel AB switcher for audio, triggers and Ccontrol voltages
 
-
-
-## 📥 Installation
-
-1. Clone this repository into your VCV Rack plugins folder:
-   ```bash
-   git clone https://github.com/GPrackmodules/GPrackmodules.git
-   ```
-
-2. Build it using make, CMake (including CLion) or the VCV Rack Plugin Development Toolchain
-   See the official guide: [VCV Rack Plugin Development](https://vcvrack.com/manual/PluginDevelopmentTutorial)
