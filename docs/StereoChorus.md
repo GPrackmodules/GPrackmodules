@@ -6,7 +6,7 @@
 
 The Chorus effect adds complexity to signals by duplicating input signals and applying pitch modulation to them.
 
-* Four internal LFOs to control 4 Stereo voices.
+* Four internal LFOs to control four Stereo voices.
 * Left and right channels of one voice are modulated from the same internal LFO, but
 with a 90-degree phase offset.
 * Additional or exclusive external modulation of all eight independent circuits is available through modulation inputs.
