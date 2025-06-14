@@ -3,6 +3,7 @@
 ![Stereo Chorus Module](StereoChorus.png "The Stereo Chorus Module") &nbsp; &nbsp; &nbsp;![Stereo Chorus Module](StereoChorus-dark.png "The Stereo Chorus Module")
 
 <h2>Features</h2>
+
 The Chorus effect adds complexity to signals by duplicating input signals and applying pitch modulation to them.
 
 * Four internal LFOs to control 4 Stereo voices.
@@ -12,6 +13,7 @@ with a 90-degree phase offset.
 * CV inputs with attenuverters can control most parameters. 
 
 <h2>Sockets</h2>
+
 * One or two audio inputs can be fed into the **IN** sockets in the lower left corner
 of the front panel
 * The processed signal is provided in the **OUT** section in the lower right corner.
@@ -28,34 +30,45 @@ the respective attenuverters and then applied to parameters in addition to the v
 adjusted with the front panel knobs. See below for details.
 
 <h2>Parameters</h2>
+
 <h3>Main Parameters</h3>
 
 <h4>RATE</h4>
+
 The **RATE** parameter controls the frequency of the internal LFOs in a range
 from 1 to 10 Hz. If you turn the **RATE** knob all the way down, the internal LFOs
 will be deactivated and only external modulation will take place. Please note that
 switching to "External Modulation Only" and back will lead to a sudden jump in
 delay with a little click. Therefore, this LFO deactivation is not accessible
 through the **RATE** control voltage.
+
 <h4>DEPTH</h4>
+
 The **DEPTH** parameter determines the amount of pitch modulation taking place.
 Normally this also depends on the frequency of the modulation signal, but for the
 internal LFOs this gets compensated, so regardless of the **RATE** setting pitch
 variation at the maximum **DEPTH** setting will be about +/- one semitone.
+
 <h4>TONE</h4>
+
 The **TONE** parameter controls the frequency content of the wet signal. If turned
 to the left (values -100% to -1%) a lowpass is applied to make the signal sound darker.
 If turned to the right (1% to 100%) a highpass will cut away some of the low frequencies
 to provide a clearer, less muddy signal.
+
 <h4>VOICES</h4>
+
 The **VOICES** parameter determines how many voices are active. More voices give a
 more complex signal. If more than one voice is activated, the internal LFOs are detuned
 against each other by a few percent.
+
 <h4>WET</h4>
+
 The **WET** parameter defines the mix between the input signal and the processed
 effect signal.
 
 <h3>Attenuverters</h3>
+
 The four attenuverters determine the amount of CV control for their respective parameters.
 In the middle position the CV input is inactive. They are applied as a factor to the
 control voltages between -1 (displayed as -100%, inverts the CV) and 1 (100%, no inverting).
@@ -81,6 +94,7 @@ way down, **RANGE** all the way up and use external modulation only.
 In this mode a 1 Hz sine wave modulation will create about +/- one
 semitone of pitch modulation, higher modulation frequencies can
 result in much higher pitch changes.
+
 <h2>Sample Applications</h2>
 
 ![Stereo Chorus CV Sample](StereoChorusCV.png "MIDI Modulation Wheel controlling RATE and WET, Aftertouch controlling DEPTH")
