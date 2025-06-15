@@ -1,0 +1,15 @@
+[core]
+	excludesfile = /home/gp/.gitignore
+	autocrlf = input
+[user]
+	name = gp
+	email = gp.rackmodules@web.de
+[credential]
+	helper = store
+	helper = 
+	helper = /usr/local/bin/git-credential-manager
+	credentialStore = secretservice
+[gui]
+[http]
+[init]
+	defaultBranch = main
