@@ -3,7 +3,7 @@
   "name": "GPrackmodules",
   "version": "2.0.0",
   "license": "GPL-3.0-or-later",
-  "brand": "GP",
+  "brand": "GPaudio",
   "author": "GP",
   "authorEmail" :"gp.rackmodules@web.de",
   "authorUrl": "",
@@ -11,7 +11,7 @@
   "manualUrl": "https://gprackmodules.github.io/GPrackmodules/",
   "sourceUrl": "https://github.com/GPrackmodules/GPrackmodules",
   "donateUrl": "",
-  "changelogUrl": "",
+  "changelogUrl": "https://gprackmodules.github.io/GPrackmodules/changelog.html",
   "modules": [
     {
       "slug": "AB4",
