@@ -15,18 +15,22 @@ with a 90-degree phase offset.
 <h2>Sockets</h2>
 
 * One or two audio inputs can be fed into the **IN** sockets in the lower left corner
-of the front panel.
+of the front panel. The **IN** sockets will accept all signals from polyphonic cables
+and sum them together before going into the monophonic signal processing.
 * The processed signal is provided in the **OUT** section in the lower right corner.
 If both audio IN and OUT are stereo, there is no audio crossfeeding between channels,
 so Stereo Chorus can be used as a dual Mono Chorus with a shared set of parameters.
+The **OUT** sockets provide a monophonic signal.
 * **MODULATION** inputs 1 through 4 accept voltages for external
 modulation of the voices. Each modulation input can accept polyphonic cables and will
 use a signal on channel 2 for independent modulation of the right channel of each voice.
 Modulation input 1 is marked **1/P**, since it can also be used to modulate all eight
-circuits with one polyphonic cable. You can use the VCV MERGE module to combine eight
-modulation sources into one cable and plug that into modulation input **1/P**.
-Channels 1 through 4 control the left side if the voices, channels 5 through 8
-control the right sides.
+circuits with one polyphonic cable. The polyphonic cable must carry exactly eight channels,
+regardless of the number of voices selected in Stereo Chorus.
+You can use the VCV MERGE module to combine eight modulation sources into one cable and
+plug that into modulation input **1/P**. Channels 1 through 4 control the left side if
+the voices, channels 5 through 8 control the right sides. Set the number of channels in
+the MERGE modules to eight.
 * The **RATE**, **DEPTH**, **TONE** and **WET** control voltages are multiplied with
 the respective attenuverters and then applied to parameters in addition to the values
 adjusted with the front panel knobs. See below for details.
@@ -99,9 +103,9 @@ result in much higher pitch changes.
 
 <h2>Sample Applications</h2>
 
-![Stereo Chorus CV Sample](StereoChorusCV.png "MIDI Modulation Wheel controlling RATE and WET, Aftertouch controlling DEPTH")
+![Stereo Chorus CV Sample](StereoChorusCV.png "MIDI Modulation Wheel controlling RATE and DEPTH and WET")
 <br>
-**CV Control with MIDI Modulation Wheel and Aftertouch**
+**CV Control with MIDI Modulation Wheel**
 <br>
 
 ![Stereo Chorus External Modulation Sample](StereoChorusExtMod.png "Polyphonic External Modulation Cable")

@@ -14,9 +14,16 @@ Up to 16 Channel modules can be combined with one Master and one Aux section by 
 
 <h2>Channel Module</h2>
 
+Use this module to provide input signals to the mixer.
+
+Up to 16 Channel modules can be part of one chain of mixer modules. Any additional modules,
+counting from left to right, will be non-functional.
+
 <h3>Sockets</h3>
 
-This module has two sockets for a mono or stereo input signal.
+This module has two sockets for a mono or stereo input signal. The input sockets
+accept signals from polyphonic cables and sum together all polyphonic channels before
+feeding them into the internal monophonic mixing.
 
 <h3>Parameters</h3>
 
@@ -41,11 +48,17 @@ are combined, the extra channels will not show a number and will be disabled.
 
 <h2>Master Module</h2>
 
+The Master module provides the main output of the mixer.
+
+There has to be exactly one Master module in an adjacent group of Chained Mixer modules.
+If two or more Master modules are detected, only the leftmost module of them will be active.
+If no Master module is present, the mixer will nor work.
+
 <h3>Sockets</h3>
 
-The Master module provides two sockets for the stereo output signal. Only one Master module
-can be active in an adjacent group of Chained Mixer modules. If two or more Master modules are detected,
-only the leftmost module of them will be active.
+The Master module provides two sockets for the stereo output signal. The output signal is
+monophonic, any polyphonic signals coming into the Channel or Aux modules are summed into
+a monophonic signal before mixing takes place.
 
 <h3>Parameters</h3>
 
@@ -65,8 +78,12 @@ or more Aux modules are detected, only the leftmost module of them will be activ
 <h3>Sockets</h3>
 
 For each of the AUX devices there is a stereo set of **SEND** output sockets and a
-stereo set of **RETURN** input sockets. It is possible to use only one of the Send and/or Return
-sockets, the mixer will handle summing and panning accordingly.
+stereo set of **RETURN** input sockets. It is possible to use Send and/or Return in mono,
+the mixer will handle summing and panning accordingly.
+
+The **RETURN** input sockets will accept polyphonic cabels and create an internal monophonic sum
+from them before they are mixed to the Master module's output. The **SEND** outputs provide a
+monophonic signal.
 
 <h3>Parameters</h3>
 
