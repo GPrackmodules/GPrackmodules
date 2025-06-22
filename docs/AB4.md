@@ -1,5 +1,7 @@
 <h1>AB4 - Simple four way A/B switcher</h1>
 
+**AB4** is a module in the GP plugin for VCV Rack 2
+
 ![AB4 Module](AB4.png "The AB4 Module") &nbsp; &nbsp; &nbsp;![AB4 Module](AB4-dark.png "The AB4 Module")
 
 This module is a simple polyphonic A/B switcher. The four output signals are either fed from

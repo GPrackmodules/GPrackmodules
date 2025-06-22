@@ -1,5 +1,7 @@
 <h1>Stereo Chorus</h1>
 
+**Stereo Chorus** is a module in the GP plugin for VCV Rack 2
+
 ![Stereo Chorus Module](StereoChorus.png "The Stereo Chorus Module") &nbsp; &nbsp; &nbsp;![Stereo Chorus Module](StereoChorus-dark.png "The Stereo Chorus Module")
 
 <h2>Features</h2>

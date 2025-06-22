@@ -1,5 +1,7 @@
 <h1>Chained Mixer - Modular Stereo Mixer</h1>
 
+**Chained Mixer** is a module in the GP plugin for VCV Rack 2
+
 ![Chained Mixer Modules](ChainedMixer.png "Chained Mixer With Two Input Channel Modules")  &nbsp; &nbsp; &nbsp;![Chained Mixer Modules](ChainedMixer-dark.png "Chained Mixer With Two Input Channel Modules") 
 
 <h2>Available Modules</h2>

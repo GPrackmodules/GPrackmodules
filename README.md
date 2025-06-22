@@ -1,6 +1,6 @@
-# GPrackmodules Plugin Suite
+# GP Plugin Suite for VCV Rack 2
 
-**GPrackmodules** is a suite of miscellaneous modules for the virtual **VCV Rack 2** modular synthesizer
+**GP** is a suite of miscellaneous modules for the virtual **VCV Rack 2** modular synthesizer
 
 The following modules are included:
 
