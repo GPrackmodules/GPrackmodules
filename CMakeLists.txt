@@ -27,7 +27,9 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment ver
 
 project(GPrackmodules)
 
-set(PLUGIN_NAME ${PROJECT_NAME})
+# PLUGIN_NAME must match SLUG from plugin.json
+
+set(PLUGIN_NAME GP)
 set(ADDITIONAL_PLUGIN_DISTRIBUTABLES
 	LICENSE
 	LICENSE-dist
