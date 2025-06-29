@@ -19,7 +19,6 @@
       "description": "4 Channel A/B Switcher",
       "manualUrl": "https://gprackmodules.github.io/GPrackmodules/AB4.html",
       "tags": ["Switch",
-        "Switch",
         "Utility",
         "Polyphonic"
       ]
@@ -30,7 +29,8 @@
       "description": "Channel Strip for Chained Mixer",
       "manualUrl": "https://gprackmodules.github.io/GPrackmodules/ChainedMixer.html",
       "tags": [
-        "Mixer"
+        "Mixer",
+        "Expander"
       ]
     },
     {
@@ -48,7 +48,8 @@
       "description": "Aux section for Chained Mixer",
       "manualUrl": "https://gprackmodules.github.io/GPrackmodules/ChainedMixer.html",
       "tags": [
-        "Mixer"
+        "Mixer",
+        "Expander"
       ]
     },
     {

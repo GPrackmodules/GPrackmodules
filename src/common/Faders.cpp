@@ -105,6 +105,14 @@ std::string FaderGainQuantity::getDisplayValueString()
 	return szValue;
 }
 
+void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
+{
+	float fdB;
+	if (sscanf(s.c_str(), "%f", &fdB) != 1)
+		fdB = OFF_DB;
+	setDisplayValue(FaderdB2Param(fdB));
+}
+
 /*static*/ float FaderGainQuantity::FaderParam2dB(float fParam)
 {
 	if(fParam <= 0.0f)
@@ -128,6 +136,25 @@ std::string FaderGainQuantity::getDisplayValueString()
 	}
 	return (float)s_FaderCurve[N_FADER_CURVE - 1].ddB;
 }
+
+/*static*/ float FaderGainQuantity::FaderdB2Param(float fdB)
+{
+	double ddB = (double)fdB;
+	if(ddB <= s_FaderCurve[0].ddB)
+		return 0.0f;
+	if(ddB >= s_FaderCurve[N_FADER_CURVE -1].ddB)
+		return FADER_STEPS_F;
+	for(int i = 1; i < N_FADER_CURVE; i++)
+	{
+		if(ddB > s_FaderCurve[i].ddB)
+			continue;
+		double dRel = (ddB - s_FaderCurve[i - 1].ddB) / (s_FaderCurve[i].ddB - s_FaderCurve[i - 1].ddB);
+		double dRet = s_FaderCurve[i - 1].dThresh + dRel * (s_FaderCurve[i].dThresh - s_FaderCurve[i - 1].dThresh);
+		return (float)dRet;
+	}
+	return FADER_STEPS_F;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PanBalQuantity
@@ -237,6 +264,27 @@ std::string SendQuantity::getDisplayValueString() /*override*/
 	char szValue[32];
 	snprintf(szValue, sizeof(szValue), "%.1f dB", s_Send[nParam].fdB);
 	return szValue;
+}
+
+void SendQuantity::setDisplayValueString(std::string s) /*override*/
+{
+	float fdB;
+	float fParam;
+	if (s == "Off")
+		fParam = 0.0f;
+	else if (sscanf(s.c_str(), "%f", &fdB) != 1)
+		fParam = 0.0f;
+	else if (fdB >= 0.0f)
+		fParam = 1.0f;
+	else
+	{
+		float fFactor = pow(10.0f, fdB / 20.0f);
+		if (fFactor == 0.0f)
+			fParam = 0.0f;
+		else
+			fParam = sqrt(fFactor);
+	}
+	setDisplayValue(fParam * SEND_STEPS);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

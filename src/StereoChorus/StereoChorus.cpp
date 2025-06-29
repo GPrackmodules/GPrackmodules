@@ -36,7 +36,8 @@
 #define LIGHT_LEFT_Y_MM		(35.6f)
 #define LIGHT_RIGHT_Y_MM	(41.6f)
 
-static float s_fMinus4Pt5dB = pow(10.0, -4.50f / 20.0f);
+static const float s_fMinus4Pt5dB = pow(10.0, -4.50f / 20.0f);
+static const float s_fExternalMod = -0.0001f;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PARAMETER QUANTITIES
@@ -54,11 +55,27 @@ struct RateQuantity : public ParamQuantity
 		sstrHoldTime << std::fixed << std::setprecision(2) << fHertz << " Hz";
 		return sstrHoldTime.str();
 	}
+
+	void setDisplayValueString(std::string s) override
+	{
+		float fHertz;
+		if (sscanf(s.c_str(), "%f", &fHertz) != 1)
+			fHertz = 1.0f;
+		setDisplayValue(Value(fHertz));
+	}
+
 	static float Hertz(float fValue)
 	{
 		if (fValue < 0.0f)
 			return 1.0f;
 		return 1.0f * pow(10.0f, fValue);
+	}
+
+	static float Value(float fHertz)
+	{
+		if (fHertz < 0.0f)
+			return s_fExternalMod;
+		return log10(fHertz);
 	}
 };
 
@@ -87,7 +104,7 @@ StereoChorusModule::StereoChorusModule() :
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
 
-	configParam<RateQuantity>(ParamRate, -0.0001f, 1.0f, 0.5f, "Rate");
+	configParam<RateQuantity>(ParamRate, s_fExternalMod, 1.0f, 0.5f, "Rate");
 	configParam(ParamDepth, 1.0f, 100.0f, 33.0f, "Depth", "%");
 	paramQuantities[ParamDepth]->snapEnabled = true;
 	configParam(ParamTone, -100.0f, 100.0f, 0.f, "Tone", "%");
@@ -362,7 +379,7 @@ void StereoChorusModule::AdvanceLFO(LFO& rLFO)
 
 void StereoChorusModule::HandleVoices(bool bForce /*= false*/)
 {
-	bool bStereo = outputs[OutputL].isConnected() && outputs[OutputR].isConnected();
+	bool bStereo = outputs[OutputL].isConnected() == outputs[OutputR].isConnected(); // both or none connected
 	int nVoices = (int)params[ParamVoices].getValue();
 	if (nVoices != m_nVoices || bStereo != m_bStereo || bForce)
 	{

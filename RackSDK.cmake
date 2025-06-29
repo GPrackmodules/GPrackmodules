@@ -14,15 +14,15 @@ else ()
   message(FATAL_ERROR "Couldn't find 'include/rack.hpp' in '${RACK_SDK_DIR}'")
 endif ()
 
-if ("${PLUGIN_NAME}" STREQUAL "")
-  message(FATAL_ERROR "PLUGIN_NAME variable not set! Add PLUGIN_NAME variable to the project CMakeLists.txt before including RackSDK.cmake.\
- The PLUGIN_NAME must correspond to the plugin slug, as defined in plugin.json.")
+if ("${PLUGIN_SLUG}" STREQUAL "")
+  message(FATAL_ERROR "PLUGIN_SLUG variable not set! Add PLUGIN_SLUG variable to the project CMakeLists.txt before including RackSDK.cmake.\
+ The PLUGIN_SLUG must correspond to the plugin slug, as defined in plugin.json.")
 else ()
-  message(STATUS "Using PLUGIN_NAME '${PLUGIN_NAME}'")
+  message(STATUS "Using PLUGIN_SLUG '${PLUGIN_SLUG}'")
 endif ()
 
 if ("${ADDITIONAL_PLUGIN_DISTRIBUTABLES}" STREQUAL "")
-  message(WARNING "ADDITIONAL_PLUGIN_DISTRIBUTABLES variable not set. For installing additional files into '${PLUGIN_NAME}'\
+  message(WARNING "ADDITIONAL_PLUGIN_DISTRIBUTABLES variable not set. For installing additional files into '${PLUGIN_SLUG}'\
    folder add ADDITIONAL_PLUGIN_DISTRIBUTABLES variable to the project CMakeLists.txt before including RackSDK.cmake.")
 endif ()
 
@@ -82,7 +82,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(ARCH_CPU x64)
   # set(LOCAL_APP_DATA_WIN $ENV{LOCALAPPDATA})
   # message("LocalAppData ${LOCAL_APP_DATA}")
-  set(USER_PLUGIN_DIR "$ENV{LOCALAPPDATA}\\Rack2\\plugins-win-x64\\${PLUGIN_NAME}")
+  set(USER_PLUGIN_DIR "$ENV{LOCALAPPDATA}\\Rack2\\plugins-win-x64\\${PLUGIN_SLUG}")
   set(USER_PLUGIN_RES_DIR "${USER_PLUGIN_DIR}\\res")
 endif ()
 
@@ -97,7 +97,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   endif ()
   set_target_properties(${RACK_PLUGIN_LIB} PROPERTIES SUFFIX ".dylib")
   set_target_properties(${RACK_PLUGIN_LIB} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-  set(USER_PLUGIN_DIR "$ENV(HOME)/Library/Application Support/Rack2/${PLUGIN_NAME}")
+  set(USER_PLUGIN_DIR "$ENV(HOME)/Library/Application Support/Rack2/${PLUGIN_SLUG}")
   set(USER_PLUGIN_RES_DIR "${USER_PLUGIN_DIR}/res")
 endif ()
 
@@ -107,7 +107,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_compile_options(RackSDK INTERFACE -fno-gnu-unique)
   # When Rack loads a plugin, it symlinks /tmp/Rack2 to its system dir, so the plugin can link to libRack.
   target_compile_options(RackSDK INTERFACE -Wl,-rpath=/tmp/Rack2)
-  set(USER_PLUGIN_DIR $ENV{HOME}/.local/share/Rack2/plugins-lin-x64/${PLUGIN_NAME})
+  set(USER_PLUGIN_DIR $ENV{HOME}/.local/share/Rack2/plugins-lin-x64/${PLUGIN_SLUG})
   set(USER_PLUGIN_RES_DIR "${USER_PLUGIN_DIR}/res")
 endif ()
 
@@ -115,9 +115,9 @@ message("-- USER_PLUGIN_DIR: ${USER_PLUGIN_DIR}")
 
 target_link_libraries(${RACK_PLUGIN_LIB} PRIVATE RackSDK)
 
-install(TARGETS ${RACK_PLUGIN_LIB} LIBRARY DESTINATION ${PROJECT_BINARY_DIR}/${PLUGIN_NAME} OPTIONAL)
-install(DIRECTORY ${PROJECT_BINARY_DIR}/${PLUGIN_NAME}/ DESTINATION ${PLUGIN_NAME})
-file(COPY ${PLUGIN_DISTRIBUTABLES} DESTINATION ${PLUGIN_NAME})
+install(TARGETS ${RACK_PLUGIN_LIB} LIBRARY DESTINATION ${PROJECT_BINARY_DIR}/${PLUGIN_SLUG} OPTIONAL)
+install(DIRECTORY ${PROJECT_BINARY_DIR}/${PLUGIN_SLUG}/ DESTINATION ${PLUGIN_SLUG})
+file(COPY ${PLUGIN_DISTRIBUTABLES} DESTINATION ${PLUGIN_SLUG})
 
 set(STABLE_PLUGIN_BUILD_TARGET build_plugin)
 add_custom_target(${STABLE_PLUGIN_BUILD_TARGET})

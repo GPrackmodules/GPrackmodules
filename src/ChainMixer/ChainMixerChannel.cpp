@@ -13,7 +13,7 @@ static shared_ptr<Svg> NumberSvg(int nNumber)
 	lock_guard<mutex> lock(s_mtxNumberSvgs);
 	if (s_SvgsLight[0] == nullptr)
 	{
-		for (int i = 0; i <= MAX_CHAINMIXER_CHANNELS; i++)
+		for (int i = 0; i < MAX_CHAINMIXER_CHANNELS; i++)
 		{
 			std::stringstream ssLight;
 			ssLight << "res/Number" << i + 1 << ".svg";

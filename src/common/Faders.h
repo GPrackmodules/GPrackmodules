@@ -14,9 +14,11 @@ struct FaderGainQuantity : public ParamQuantity
 	FaderGainQuantity();
 	static float GainFactor(float fParam);
 	std::string getDisplayValueString() override;
+	void setDisplayValueString(std::string s) override;
 
 private:
 	static float FaderParam2dB(float fParam);	// parameter from 0.0 to 1.0
+	static float FaderdB2Param(float fdB);
 };
 
 struct PanBalQuantity : public ParamQuantity
@@ -35,6 +37,7 @@ struct SendQuantity : public ParamQuantity
 	SendQuantity();
 	static float GainFactor(float fParam);
 	std::string getDisplayValueString() override;
+	void setDisplayValueString(std::string s) override;
 };
 
 

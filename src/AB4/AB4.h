@@ -18,6 +18,7 @@ public:
 		InputB2,
 		InputB3,
 		InputB4,
+		InputAB,
 		NumInputs
 	};
 	enum OutputId
@@ -39,12 +40,14 @@ public:
 
 public:
 	void process(const ProcessArgs& args) override;
-	bool GetB() const { return m_bB; }
+	bool GetB() const { return m_bParamB; }
 	void SetWidget(struct AB4Widget* pWidget) { m_pWidget = pWidget; }
 
 private:
 	struct AB4Widget* m_pWidget = nullptr;
-	bool m_bB = false;
+	dsp::SchmittTrigger m_trigAB;
+	bool m_bParamB = false;
+	bool m_bInputB = false;
 	bool m_bInitialized = false;
 };
 

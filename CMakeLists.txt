@@ -8,6 +8,9 @@
 # This CMakeLists.txt works nicely with CLion and allows you to have CMake profiles for Debug (with
 # symbols, nothing 'optimized away') and Release (full optimization) builds.
 #
+# This CMakeLists.txt file has been tested with CLion under Windows and Linux. Mac support is included
+# as originally ptrovided at the link below, but I have no way of testing it.
+#
 # Unlike with the Makefile no .vcvplugin archive gets created. Use the Makefile and 'make dist' or
 # 'make install' to create official pluyin archives.
 #
@@ -27,9 +30,9 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment ver
 
 project(GPrackmodules)
 
-# PLUGIN_NAME must match SLUG from plugin.json
+# PLUGIN_SLUG must match SLUG from plugin.json
 
-set(PLUGIN_NAME GP)
+set(PLUGIN_SLUG GP)
 set(ADDITIONAL_PLUGIN_DISTRIBUTABLES
 	LICENSE
 	LICENSE-dist

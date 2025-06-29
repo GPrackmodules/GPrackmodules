@@ -27,31 +27,33 @@ void AB4Module::process(const ProcessArgs& args) /*override*/
 		m_bInitialized = true;
 		if (params[ParamAB].getValue() < 0.5f)
 		{
-			m_bB = false;
+			m_bParamB = false;
 			lights[LightB].setBrightness(0.2f);
 		}
 		else
 		{
-			m_bB = true;
+			m_bParamB = true;
 			lights[LightB].setBrightness(1.0f);
 		}
 		if (m_pWidget != nullptr)
-			m_pWidget->SetState(m_bB);
+			m_pWidget->SetState(m_bParamB);
 	}
 
-	bool bB = params[ParamAB].getValue() > 0.5f;
-	if (bB != m_bB)
+	bool bParamB = params[ParamAB].getValue() > 0.5f;
+	bool bInputB = (inputs[InputAB].getVoltage() > 1.0f);
+	if (bParamB != m_bParamB || bInputB != m_bInputB)
 	{
-		m_bB = bB;
-		if (!bB)
+		m_bParamB = bParamB;
+		m_bInputB = bInputB;
+		if (!bParamB)
 			lights[LightB].setBrightness(0.2f);
 		else
 			lights[LightB].setBrightness(1.0f);
 		if (m_pWidget != nullptr)
-			m_pWidget->SetState(m_bB);
+			m_pWidget->SetState(m_bParamB || m_bInputB);
 	}
 
-	if (m_bB)
+	if (m_bParamB || m_bInputB)
 	{
 		int n = inputs[InputB1].getChannels();
 		for (int i = 0; i < n; i++)
@@ -126,6 +128,7 @@ AB4Widget::AB4Widget(AB4Module* pModule)
 	fY += 11;
 	addParam(createParamCentered<VCVLatch>(vecRight.plus(mm2px(Vec(-fX, fY))), pModule, AB4Module::ParamAB));
 	addChild(createLightCentered<MediumLight<GreenLight>>(vecRight.plus(mm2px(Vec(-fX, fY))), pModule, AB4Module::LightB));
+	addInput(createInputCentered<ThemedPJ301MPort>(vecRight.plus(mm2px(Vec(-fX, fY + 11.0f))), pModule, AB4Module::InputAB));
 
 
 	fY = 27.0f;

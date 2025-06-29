@@ -146,6 +146,31 @@
          d="m 13.754769,176.12798 c 0,0.132 0.104,0.232 0.236,0.232 0.132,0 0.236,-0.1 0.236,-0.232 v -0.416 h 0.216 c 0.116,0 0.204,-0.088 0.204,-0.2 0,-0.112 -0.088,-0.204 -0.204,-0.204 h -0.216 v -1.572 c 0,-0.132 -0.108,-0.236 -0.24,-0.236 -0.144,0 -0.208,0.052 -0.3,0.16 l -1.316,1.56 c -0.076,0.084 -0.108,0.164 -0.108,0.26 0,0.14 0.108,0.232 0.24,0.232 h 1.252 z m -0.92,-0.82 0.92,-1.108 v 1.108 z"
          id="path28632" />
     </g>
+    <rect
+       style="fill:#f9f9f9;fill-opacity:1;stroke:#808080;stroke-width:0;stroke-linecap:round"
+       id="rect8960"
+       width="0.29999849"
+       height="15.469293"
+       x="14.584001"
+       y="200.05399" />
+    <rect
+       style="fill:#501616;stroke-width:0.22991"
+       id="rect3688"
+       width="6.98"
+       height="8.7259998"
+       x="11.33"
+       y="191.13698" />
+    <g
+       aria-label="A"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:6.61458px;font-family:'Gotham Rounded';-inkscape-font-specification:'Gotham Rounded Bold';letter-spacing:0px;word-spacing:0px;fill:#ff5555;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       id="text20-3"
+       transform="matrix(0.93470464,0,0,0.93519999,11.013392,-77.66453)">
+      <path
+         d="m 1.1066085,294.4694 c 0,0.33866 0.2624667,0.6096 0.6011333,0.6096 0.2709333,0 0.4910667,-0.14394 0.6011333,-0.4064 l 0.4148667,-0.97367 H 5.331475 l 0.3979333,0.93133 c 0.127,0.27094 0.3217333,0.44874 0.6265333,0.44874 0.3471333,0 0.6180666,-0.2794 0.6180666,-0.62654 0,-0.0762 -0.0254,-0.16086 -0.067733,-0.26246 L 4.8404083,289.52487 C 4.696475,289.19467 4.4509417,289.0084 4.086875,289.0084 h -0.0762 c -0.3640666,0 -0.6180666,0.18627 -0.7619999,0.51647 L 1.1828085,294.19 c -0.042333,0.0931 -0.0762,0.18626 -0.0762,0.2794 z m 2.0997332,-1.92193 0.8212667,-1.9558 0.8212666,1.9558 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:'Gotham Rounded';-inkscape-font-specification:'Gotham Rounded Bold';fill:#ff5555;stroke-width:0.264583"
+         id="path40-6"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
