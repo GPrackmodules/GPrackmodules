@@ -81,16 +81,17 @@ public:
 	void SetWidget(struct StereoChorusWidget* pWidget) { m_pWidget = pWidget; }
 
 private:
-	typedef struct _LFO
+	typedef struct _LFO4
 	{
-		float fPhase = 0.0f;		// runs from 0..1.0f
-		float fFrequency = 1.0f;	// 1.0f / freuqency
-		float fSine;
-		float fCosine;				// only valid if m_bStereo
+		simd::float_4 fPhase = { 0.0f, 0.0f, 0.0f, 0.0f };		// runs from 0..1.0f
+		simd::float_4 fFrequency = { 1.0f, 1.0f, 1.0f, 1.0f };	// 1.0f / freuqency
+		simd::float_4 fSine;
+		simd::float_4 fCosine;									// only valid if m_bStereo
 	}
-	LFO;
+	LFO4;
+
 private:
-	void AdvanceLFO(LFO& rLFO);
+	void AdvanceLFO4();
 	void HandleVoices(bool bForce = false); // also handles mono/stereo
 	void HandleRate(bool bForce = false);
 	void HandleDepth(bool bForce = false);
@@ -114,7 +115,8 @@ private:
 
 	float m_fValueRate = 0.5f;
 	float m_fAvgFrequency = 1.0f;
-	LFO m_LFOs[STEREO_CHORUS_VOICES];
+	// LFO m_LFOs[STEREO_CHORUS_VOICES];
+	LFO4 m_lfo4;
 
 	float m_fValueDepth = 0.5f;
 	float m_fDepthDelay = 0.0f;
@@ -131,7 +133,7 @@ private:
 	Fade m_fadeGainCorrection;
 	float m_fGainCorrection = 0.25f; // depends on depth and number of voices
 
-		float m_fValueWet = 0.5f;
+	float m_fValueWet = 0.5f;
 	Fade2 m_fadeWet;
 	float m_fDryFactor = 0.0f;
 	float m_fWetFactor = 0.0f;

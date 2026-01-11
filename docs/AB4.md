@@ -5,10 +5,15 @@
 ![AB4 Module](AB4.png "The AB4 Module") &nbsp; &nbsp; &nbsp;![AB4 Module](AB4-dark.png "The AB4 Module")
 
 This module is a simple polyphonic A/B switcher. The four output signals are either fed from
-the four A inputs signals or the four B inputs. A button controls the A/B selection, and an
+the four A inputs signals or the four B inputs.
+
+A button controls the A/B selection, and an
 indicator shows which group of inputs is selected. There is also a control voltage input to
-control A/B switching. The CV input and the parameter button are combined with a logical OR
+control A/B switching. The "CV A/B" input and the parameter button are combined with a logical OR
 operation, so AB4 switches to B when either is active.
+
+The state of the A/B switch is reflected on the "CV A/B" control voltage output
+and can be used to control more AB4 modules or other modules.
 
 All channels of polyphonic input cables are
 carried from the selected input to the output sockets.

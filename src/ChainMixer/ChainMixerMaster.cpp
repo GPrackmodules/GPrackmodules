@@ -22,10 +22,12 @@ ChainMixerMasterModule::ChainMixerMasterModule() :
 	configParam<SendQuantity>(ParamAux1, 0.f, (float)SEND_STEPS, (float)SEND_STEPS, "Aux 1 Send Level");
 	configParam<SendQuantity>(ParamAux2, 0.f, (float)SEND_STEPS, (float)SEND_STEPS, "Aux 2 Send Level");
 	configParam<FaderGainQuantity>(ParamGain, 0.f, FADER_STEPS_F, FADER_ZERO_DB, "Gain");
+#ifdef CHAIN_MIXER_SNAPGAIN
 	paramQuantities[ParamGain]->snapEnabled = true;
+#endif
 	configParam(ParamMute, 0.f, 1.f, 0.f, "Mute");
-	configOutput(OutputL, "Input Left");
-	configOutput(OutputR, "Input Rught");
+	configOutput(OutputL, "Left");
+	configOutput(OutputR, "Right");
 }
 
 void ChainMixerMasterModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
@@ -141,7 +143,7 @@ void ChainMixerMasterModule::SetupBusses()
 	{
 		if (outputs[OutputR].isConnected())
 		{
-			m_pMainL = &m_fMainR;
+			m_pMainL = &m_fMainL; // mono signal is always on L
 			m_fMainL = 0.0f;
 		}
 		else

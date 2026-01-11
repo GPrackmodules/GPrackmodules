@@ -27,7 +27,7 @@ The **OUT** sockets provide a monophonic signal.
 modulation of the voices. Each modulation input can accept polyphonic cables and will
 use a signal on channel 2 for independent modulation of the right channel of each voice.
 Modulation input 1 is marked **1/P**, since it can also be used to modulate all eight
-circuits with one polyphonic cable. The polyphonic cable must carry exactly eight channels,
+circuits with one polyphonic cable. The polyphonic cable must carry eight or more channels,
 regardless of the number of voices selected in Stereo Chorus.
 You can use the VCV MERGE module to combine eight modulation sources into one cable and
 plug that into modulation input **1/P**. Channels 1 through 4 control the left side if

@@ -7,9 +7,6 @@
 #pragma once
 #include "Faders.h"
 
-#define RACK_GRID_WIDTH_MM	(5.08f)
-#define RACK_GRID_HEIGHT_MM	(128.5f)
-
 #define KNOB_TOP_MM			(14.5f)
 #define KNOB_STEP_MM		(10.0f)
 #define KNOB_AUX1_Y_MM		KNOB_TOP_MM
@@ -28,4 +25,7 @@
 #define SOCKET_R_Y_MM		SOCKET_BOTTOM_MM					// numbered from bottom upwards
 
 #define CENTER_2U_MM		5.08f
+
+// causes issue with MIDI mapping w/ MIDI feedback
+#define CHAIN_MIXER_SNAPGAIN
 

@@ -104,6 +104,7 @@ StereoChorusModule::StereoChorusModule() :
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
 
+	// Parameters
 	configParam<RateQuantity>(ParamRate, s_fExternalMod, 1.0f, 0.5f, "Rate");
 	configParam(ParamDepth, 1.0f, 100.0f, 33.0f, "Depth", "%");
 	paramQuantities[ParamDepth]->snapEnabled = true;
@@ -113,7 +114,7 @@ StereoChorusModule::StereoChorusModule() :
 	paramQuantities[ParamVoices]->snapEnabled = true;
 	configParam(ParamWet, 0.0f, 100.0f, 50.0f, "Wet", "%");
 	paramQuantities[ParamWet]->snapEnabled = true;
-
+	// Attenuverters
 	configParam(ParamCVRate, -100.0f, 100.0f, 0.0f, "Rate CV Attenuverter", "%");
 	paramQuantities[ParamCVRate]->snapEnabled = true;
 	configParam(ParamCVDepth, -100.0f, 100.0f, 0.0f, "Depth CV Attenuverter", "%");
@@ -122,6 +123,20 @@ StereoChorusModule::StereoChorusModule() :
 	paramQuantities[ParamCVTone]->snapEnabled = true;
 	configParam(ParamCVWet, -100.0f, 100.0f, 0.0f, "Wet CV Attenuverter", "%");
 	paramQuantities[ParamCVWet]->snapEnabled = true;
+
+	configInput(InputL, "Left");
+	configInput(InputR, "Right");
+	configInput(InputMod1, "Moduulation 1 / Polyphonic (x8)");
+	configInput(InputMod2, "Moduulation 2");
+	configInput(InputMod3, "Moduulation 3");
+	configInput(InputMod4, "Moduulation 4");
+	configInput(InputCVRate, "CV Rate");
+	configInput(InputCVDepth, "CV Depth");
+	configInput(InputCVTone, "CV Tone");
+	configInput(InputCVWet, "CV Wet");
+
+	configOutput(OutputL, "Left");
+	configOutput(OutputR, "Right");
 }
 
 StereoChorusModule::~StereoChorusModule()
@@ -239,11 +254,12 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	float fLightBase = m_fLightFactorOffset + m_fValueDepth * m_fLightFactorDepth;
 	float fModulation[STEREO_CHORUS_VOICES][2];
 
+	AdvanceLFO4();
+
 	bool bPoly = inputs[InputMod1].getChannels() >= 2 * STEREO_CHORUS_VOICES; // use 8 channels from modulation input 1
 	for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
 	{
-		LFO& lfo = m_LFOs[v];
-		AdvanceLFO(lfo);
+//		AdvanceLFO(lfo);
 
 		// determine delay modulation (+/- 1.0)
 		if (params[ParamRate].getValue() < 0.0f)
@@ -266,8 +282,8 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 		else
 		{
 			// LFO + modulation input, halved if input is connected
-			fModulation[v][0] = lfo.fSine;
-			fModulation[v][1] = lfo.fCosine;
+			fModulation[v][0] = m_lfo4.fSine[v];
+			fModulation[v][1] = m_lfo4.fCosine[v];
 			if (bPoly)
 			{
 				fModulation[v][0] = fModulation[v][0] * 0.5 + simd::clamp(inputs[InputMod1].getVoltage(v) / 20.0f, -0.5f, 0.5f);
@@ -367,14 +383,13 @@ void StereoChorusModule::onSampleRateChange(const SampleRateChangeEvent &e) /*ov
 		m_pDelayLine->UpdateSamplerate(e.sampleRate);
 }
 
-void StereoChorusModule::AdvanceLFO(LFO& rLFO)
+void StereoChorusModule::AdvanceLFO4()
 {
-	rLFO.fPhase += rLFO.fFrequency * m_fInvertedSamplerate;
-	if (rLFO.fPhase >= 1.0f)
-		rLFO.fPhase -= 1.0f;
-	rLFO.fSine = simd::sin(2.0f * M_PI * rLFO.fPhase);
+	m_lfo4.fPhase += m_lfo4.fFrequency * m_fInvertedSamplerate;
+	m_lfo4.fPhase = simd::ifelse(m_lfo4.fPhase >= 1.0f, m_lfo4.fPhase - 1.0f, m_lfo4.fPhase);
+	m_lfo4.fSine = simd::sin(2.0f * M_PI * m_lfo4.fPhase);
 	if (m_bStereo)
-		rLFO.fCosine = simd::cos(2.0f * M_PI * rLFO.fPhase);
+		m_lfo4.fCosine = simd::cos(2.0f * M_PI * m_lfo4.fPhase);
 }
 
 void StereoChorusModule::HandleVoices(bool bForce /*= false*/)
@@ -425,22 +440,22 @@ void StereoChorusModule::HandleRate(bool bForce /*= false*/)
 		switch (m_nVoices)
 		{
 			case 1:
-				m_LFOs[0].fFrequency = m_fAvgFrequency;
+				m_lfo4.fFrequency[0] = m_fAvgFrequency;
 				break;
 			case 2:
-				m_LFOs[0].fFrequency = m_fAvgFrequency * 0.951253297f;
-				m_LFOs[1].fFrequency = m_fAvgFrequency * 1.047689563214f;
+				m_lfo4.fFrequency[0] = m_fAvgFrequency * 0.951253297f;
+				m_lfo4.fFrequency[1] = m_fAvgFrequency * 1.047689563214f;
 				break;
 			case 3:
-				m_LFOs[0].fFrequency = m_fAvgFrequency * 0.9531235276f;
-				m_LFOs[1].fFrequency = m_fAvgFrequency;
-				m_LFOs[2].fFrequency = m_fAvgFrequency * 1.0487388954624f;
+				m_lfo4.fFrequency[0] = m_fAvgFrequency * 0.9531235276f;
+				m_lfo4.fFrequency[1] = m_fAvgFrequency;
+				m_lfo4.fFrequency[2] = m_fAvgFrequency * 1.0487388954624f;
 				break;
 			case 4:
-				m_LFOs[0].fFrequency = m_fAvgFrequency * 0.9134651241f;
-				m_LFOs[1].fFrequency = m_fAvgFrequency * 0.9712332123;
-				m_LFOs[2].fFrequency = m_fAvgFrequency * 1.0230897645364f;
-				m_LFOs[3].fFrequency = m_fAvgFrequency * 1.0865392524524f;
+				m_lfo4.fFrequency[0] = m_fAvgFrequency * 0.9134651241f;
+				m_lfo4.fFrequency[1] = m_fAvgFrequency * 0.9712332123;
+				m_lfo4.fFrequency[2] = m_fAvgFrequency * 1.0230897645364f;
+				m_lfo4.fFrequency[3] = m_fAvgFrequency * 1.0865392524524f;
 				break;
 		}
 		HandleDepth(true);
@@ -460,7 +475,7 @@ void StereoChorusModule::HandleDepth(bool bForce /*= false*/)
 		m_fValueDepth = fValueDepth;
 		m_fDepthDelay = MIN_DELAY + (m_fValueDepth * m_fValueDepth) * (MAX_DELAY - MIN_DELAY) / 10000.0f;
 		for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-			m_fadeDelayRanges[v].Start(m_fDepthDelay / m_LFOs[v].fFrequency);
+			m_fadeDelayRanges[v].Start(m_fDepthDelay / m_lfo4.fFrequency[v]);
 		CalcGainFactor();
 	}
 }

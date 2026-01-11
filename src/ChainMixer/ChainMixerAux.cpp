@@ -29,8 +29,10 @@ ChainMixerAuxModule::ChainMixerAuxModule() :
 	config(NumParams, NumInputs, NumOutputs, NumLights);
 	configParam<FaderGainQuantity>(ParamGain1, 0.f, FADER_STEPS_F, FADER_ZERO_DB, "Aux Return 1 Gain");
 	configParam<FaderGainQuantity>(ParamGain2, 0.f, FADER_STEPS_F, FADER_ZERO_DB, "Aux Return 2 Gain");
+#ifdef CHAIN_MIXER_SNAPGAIN
 	paramQuantities[ParamGain1]->snapEnabled = true;
 	paramQuantities[ParamGain2]->snapEnabled = true;
+#endif
 	configParam(ParamSolo1, 0.f, 1.f, 0.f, "Solo AUX 1");
 	configParam(ParamSolo1, 0.f, 1.f, 0.f, "Solo AUX 2");
 	configParam(ParamMute1, 0.f, 1.f, 0.f, "Mute AUX 1");

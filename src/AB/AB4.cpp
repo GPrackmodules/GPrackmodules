@@ -5,19 +5,20 @@ AB4Module::AB4Module()
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
 	configParam(ParamAB, 0.f, 1.f, 0.f, "");
-	configInput(InputA1, "Input A1");
-	configInput(InputA2, "Input A2");
-	configInput(InputA3, "A Input A3");
-	configInput(InputA4, "A Input A4");
-	configInput(InputB1, "B Input B1");
-	configInput(InputB2, "B Input B2");
-	configInput(InputB3, "B Input B3");
-	configInput(InputB4, "B Input B4");
-	configOutput(Output1, "Output 1");
-	configOutput(Output2, "Output 2");
-	configOutput(Output3, "Output 3");
-	configOutput(Output4, "Output 4");
-
+	configInput(InputA1, "A1");
+	configInput(InputA2, "A2");
+	configInput(InputA3, "A3");
+	configInput(InputA4, "A4");
+	configInput(InputB1, "B1");
+	configInput(InputB2, "B2");
+	configInput(InputB3, "B3");
+	configInput(InputB4, "B4");
+	configInput(InputAB, "CV A/B");
+	configOutput(Output1, "1");
+	configOutput(Output2, "2");
+	configOutput(Output3, "3");
+	configOutput(Output4, "4");
+	configOutput(OutputAB, "CV A/B");
 }
 
 void AB4Module::process(const ProcessArgs& args) /*override*/
@@ -74,6 +75,7 @@ void AB4Module::process(const ProcessArgs& args) /*override*/
 		for (int i = 0; i < n; i++)
 			outputs[Output4].setVoltage(inputs[InputB4].getVoltage(i), i);
 		outputs[Output4].setChannels(n);
+		outputs[OutputAB].setVoltage(10.0f);
 	}
 	else
 	{
@@ -96,6 +98,7 @@ void AB4Module::process(const ProcessArgs& args) /*override*/
 		for (int i = 0; i < n; i++)
 			outputs[Output4].setVoltage(inputs[InputA4].getVoltage(i), i);
 		outputs[Output4].setChannels(n);
+		outputs[OutputAB].setVoltage(0.0f);
 	}
 }
 
@@ -128,14 +131,15 @@ AB4Widget::AB4Widget(AB4Module* pModule)
 	fY += 11;
 	addParam(createParamCentered<VCVLatch>(vecRight.plus(mm2px(Vec(-fX, fY))), pModule, AB4Module::ParamAB));
 	addChild(createLightCentered<MediumLight<GreenLight>>(vecRight.plus(mm2px(Vec(-fX, fY))), pModule, AB4Module::LightB));
-	addInput(createInputCentered<ThemedPJ301MPort>(vecRight.plus(mm2px(Vec(-fX, fY + 11.0f))), pModule, AB4Module::InputAB));
-
+	addInput(createInputCentered<ThemedPJ301MPort>(vecRight.plus(mm2px(Vec(-fX, fY += 11.0f))), pModule, AB4Module::InputAB));
+	addOutput(createOutputCentered<ThemedPJ301MPort>(vecRight.plus(mm2px(Vec(-fX, fY + 11.0f))), pModule, AB4Module::OutputAB));
 
 	fY = 27.0f;
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(fX, fY)), pModule, AB4Module::InputA1));
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(fX, fY += 11.0f)), pModule, AB4Module::InputA2));
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(fX, fY += 11.0f)), pModule, AB4Module::InputA3));
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(fX, fY += 11.0f)), pModule, AB4Module::InputA4));
+
 	Vec vecBottom(0, RACK_GRID_HEIGHT);
 	fY = -16.0f - 3 * 11.0f;
 	addInput(createInputCentered<ThemedPJ301MPort>(vecBottom.plus(mm2px(Vec(fX, fY))), pModule, AB4Module::InputB1));
@@ -149,19 +153,6 @@ AB4Widget::AB4Widget(AB4Module* pModule)
 	addOutput(createOutputCentered<ThemedPJ301MPort>(vecBottomRight.plus(mm2px(Vec(-fX, fY += 11.0f))), pModule, AB4Module::Output2));
 	addOutput(createOutputCentered<ThemedPJ301MPort>(vecBottomRight.plus(mm2px(Vec(-fX, fY += 11.0f))), pModule, AB4Module::Output3));
 	addOutput(createOutputCentered<ThemedPJ301MPort>(vecBottomRight.plus(mm2px(Vec(-fX, fY += 11.0f))), pModule, AB4Module::Output4));
-
-}
-
-ABDisplay::ABDisplay()
-{
-
-}
-
-void ABDisplay::drawLayer(const rack::widget::Widget::DrawArgs& args, int nLayer) /*override*/
-{
-	if (nLayer== 1)
-		draw(args);
-	// SvgWidget::drawLayer(args, nLayer);
 }
 
 void AB4Widget::SetState(bool bB)

@@ -1,5 +1,8 @@
 #pragma once
 
+#define RACK_GRID_WIDTH_MM	(5.08f)
+#define RACK_GRID_HEIGHT_MM	(128.5f)
+
 #if __GNUC__
 #ifndef __clang__
 #pragma GCC diagnostic push
