@@ -24,6 +24,16 @@
       ]
     },
     {
+      "slug": "AB8",
+      "name": "AB8",
+      "description": "8 Channel A/B Switcher",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/AB4.html",
+      "tags": ["Switch",
+        "Utility",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "ChainMixerChannel",
       "name": "Chained Mixer Channel",
       "description": "Channel Strip for Chained Mixer",
@@ -56,6 +66,16 @@
       "slug": "StereoChorus",
       "name": "Stereo Chorus",
       "description": "Stereo Chorus with up to four voices",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/StereoChorus.html",
+      "tags": [
+        "Chorus",
+        "Effect"
+      ]
+    },
+    {
+      "slug": "Rotary",
+      "name": "Rotary Speaker Effect",
+      "description": "Rotating Speaker Effect",
       "manualUrl": "https://gprackmodules.github.io/GPrackmodules/StereoChorus.html",
       "tags": [
         "Chorus",

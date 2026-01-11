@@ -4,13 +4,13 @@ RACK_DIR ?= ../..
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS +=
 CFLAGS +=
-CXXFLAGS +=
 # Add include paths
 CXXFLAGS += -Isrc
 CXXFLAGS += -Isrc/common/
-CXXFLAGS += -Isrc/AB4/
+CXXFLAGS += -Isrc/AB/
 CXXFLAGS += -Isrc/ChainMixer/
 CXXFLAGS += -Isrc/StereoChorus/
+CXXFLAGS += -Isrc/Rotary/
 
 # Careful about linking to shared libraries, since you can't assume much about the user's environment and library search path.
 # Static libraries are fine, but they should be added to this plugin's build system.

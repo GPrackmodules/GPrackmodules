@@ -47,10 +47,13 @@ ChainMixerChannelModule::ChainMixerChannelModule() :
 	configParam<SendQuantity>(ParamAux2, 0.f, (float)SEND_STEPS, 0.f, "Aux 2 Send Level");
 	configParam<PanBalQuantity>(ParamPanBal, (float)MIN_PANBAL, (float)MAX_PANBAL, 0.f, "Pan/Balance");
 	configParam<FaderGainQuantity>(ParamGain, 0.f, FADER_STEPS_F, FADER_ZERO_DB, "Gain");
+#ifdef CHAIN_MIXER_SNAPGAIN
+	paramQuantities[ParamGain]->snapEnabled = true;
+#endif
 	configParam(ParamSolo, 0.f, 1.f, 0.f, "Solo");
 	configParam(ParamMute, 0.f, 1.f, 0.f, "Mute");
-	configInput(InputL, "Input Left");
-	configInput(InputR, "Input Rught");
+	configInput(InputL, "Left");
+	configInput(InputR, "Right");
 
 	shared_ptr<Svg> pForceInitializationOfSingleton = NumberSvg(1);
 }

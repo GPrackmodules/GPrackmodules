@@ -8,9 +8,9 @@
 
 #pragma once
 
-#define DIM_BRIGHTNESS	(0.1f)	// tone down green Solo LED to match red Mute light
+#define DIM_BRIGHTNESS	(0.1f)
 #define SOLO_BRIGHTNESS (0.75f)	// tone down green Solo LED to match red Mute light
-#define MUTE_BRIGHTNESS (1.0f)	// tone down green Solo LED to match red Mute light
+#define MUTE_BRIGHTNESS (1.0f)
 
 #define FADE_MS			(30.0f)	// fade time in ms
 

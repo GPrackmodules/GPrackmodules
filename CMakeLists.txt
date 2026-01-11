@@ -42,9 +42,10 @@ include(RackSDK.cmake)
 include_directories(
 	${CMAKE_SOURCE_DIR}/src
 	${CMAKE_SOURCE_DIR}/src/common
-	${CMAKE_SOURCE_DIR}/src/AB4
+	${CMAKE_SOURCE_DIR}/src/AB
 	${CMAKE_SOURCE_DIR}/src/ChainMixer
 	${CMAKE_SOURCE_DIR}/src/StereoChorus
+	${CMAKE_SOURCE_DIR}/src/Rotary
 )
 
 target_sources(${RACK_PLUGIN_LIB} PRIVATE
@@ -52,7 +53,9 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/common/Knobs.cpp
 	src/common/Fade.cpp
 	src/common/Fade2.cpp
-	src/AB4/AB4.cpp
+	src/AB/ABDisplay.cpp
+	src/AB/AB4.cpp
+	src/AB/AB8.cpp
 	src/plugin.cpp
 	src/ChainMixer/ChainMixerModule.cpp
 	src/ChainMixer/ChainMixerChannel.cpp
@@ -60,4 +63,8 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/ChainMixer/ChainMixerAux.cpp
 	src/StereoChorus/StereoChorus.cpp
 	src/StereoChorus/ChorusDelayLine.cpp
+	src/Rotary/Rotary.cpp
+	src/Rotary/MilliSampleDelayLine.cpp
+	src/Rotary/Crossover.cpp
+	src/Rotary/Rotor4.cpp
 )
