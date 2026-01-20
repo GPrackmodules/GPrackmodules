@@ -1,11 +1,14 @@
 //
 // Rotor4 class
 // ============
-// Handles rotation with slow/fast/vari speeds and Ramp up/Ramp down
-// Yields sine values (+/- 1.0f) for left and tight channels
+// Calculates four different rotations with common slow/fast/varispeed parameters.
+// Each roatation can have different fast, slow target RPM values and different ramp times.
+// Yields four sine values (+/- 1.0f) for left and right channels each
 //
 
 #pragma once
+
+#include <queue>
 
 #define ROTOR4_BANDS	4
 
@@ -52,10 +55,6 @@ public:
 
 	void Advance();
 
-	// obsolete
-	void Frequency(int nChannel, float fHertz);
-	void Frequency(const simd::float_4& f4Hertz, const simd::float_4& f4TargetHertz);
-
 ////////////////////////////////////////////////////////
 /// Internal methods
 ////////////////////////////////////////////////////////
@@ -76,8 +75,9 @@ private:
 		RampDown
 	};
 
-	// constructor
+	// from constructor
 	const class RotaryModule* const m_pModule;
+
 	// function parameters
 	float m_fSamplerate = 1.0f;
 	float m_fSlowRPM[ROTOR4_BANDS] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -89,16 +89,15 @@ private:
 	float m_fPhaseOffsetLR = 0.0f;	// offset between left and right channels
 	SpeedTarget m_eTargetSpeed = SpeedTarget::Stop;
 	float m_fVariSpeed = 0.0f;	// 0..1 corresponds to Stop..Fast
-
-	// derived
-	float m_fInvertedSamplerate;
+	std::queue<pair<int, SpeedTarget>> m_queRamp;	// used to spread out StartRamping, one channel per sample
 
 	// Operation
+	float m_fInvertedSamplerate;
 	FadeMode m_eFadeMode[ROTOR4_BANDS] = { FadeMode::Stopped, FadeMode::Stopped, FadeMode::Stopped, FadeMode::Stopped };
 	float m_fTargetPhaseStep[ROTOR4_BANDS] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	simd::float_4 m_f4PhaseStepDelta = { 0.0f, 0.0f, 0.0f, 0.0f };	// increment/decrement of PhaseStep while Rampning up or down
-	simd::float_4 m_f4FadeStartPhaseStep = { 0.0f, 0.0f, 0.0f, 0.0f };	// position of the rotors when fade started
-	int64_t m_nFadeStartFrame = 0;
+	simd::float_4 m_f4PhaseStepDelta = { 0.0f, 0.0f, 0.0f, 0.0f };		// increment/decrement for PhaseStep while ramping up or down
+	simd::float_4 m_f4FadeStartPhaseStep = { 0.0f, 0.0f, 0.0f, 0.0f };	// speed of the rotors when acceleration/braking began
+	int64_t m_nFadeStartFrame[ROTOR4_BANDS] = { 0, 0, 0, 0 };
 
 	// Phase values here are normalized to 0.1 = 360 degrees = 2 * PI
 	simd::float_4 m_f4Phase = { 0.0f, 0.0f, 0.0f, 0.0f };		// runs from 0..1.0f

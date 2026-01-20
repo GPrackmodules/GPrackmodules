@@ -13,7 +13,7 @@
 /// MODULE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Speeds, Rampup
+// Parameters min/max/default
 
 #define FAST_MIN			(30.0f)
 #define FAST_MAX			(600.0f)
@@ -43,10 +43,9 @@
 #define DIST_MAX			(1.0f)
 #define DIST_DEF			(0.5f)
 
-// Attenuverters
-#define ATV_MIN				(-100.0f)
-#define ATV_MAX				(100.0f)
-#define ATV_DEF				(0.0f)
+#define ANGLE_MIN			(60.0f)
+#define ANGLE_MAX			(180.0f)
+#define ANGLE_DEF			(120.0f)
 
 // Lights
 #define GREEN_OFF			(0.1f)
@@ -63,31 +62,28 @@
 #define THREEWAY_XOVER_LO			(250.0f)
 #define THREEWAY_XOVER_HI			(2000.0f)
 
-
 // Delays
 #define SPEED_OF_SOUND				(340.0f)	// m/s
 #define DIAMETER					(7.0f * 0.0254f)
 #define DIAMETER_DELAY				(DIAMETER / SPEED_OF_SOUND)
-#define MIN_DELAY					(0.001f)									// some room for float precision errors
-#define MAX_DELAY					(MIN_DELAY + 2 * DIAMETER_DELAY + 0.001)	// some room for float precision errors
+#define MIN_DELAY					(0.0001f)										// some room for float precision errors
+#define MAX_DELAY					(MIN_DELAY + 2.0f * DIAMETER_DELAY + 0.0001)	// some room for float precision errors
 
 // Gain factors
 #define GAINFACTOR_NEAR				(DIST_MIN / (DIST_MIN + 2 * DIAMETER))
 #define GAINFACTOR_FAR				(DIST_MAX / (DIST_MAX + 2 * DIAMETER))
 
 #define MIN_DISTGAINFACTOR			((1.0f - GAINFACTOR_FAR) / (1.0f - GAINFACTOR_NEAR))
-// factors for gain modulation in the bands, these apply to a 0..2.0 rotar value
+// factors for gain modulation in the bands, these apply to a 0..2.0 rotor value
 #define TREBLE_GAINDEPTH			((1.0f - GAINFACTOR_NEAR) / 2.0f)	// rotor value runs from 0 to 2
 #define MID_GAINDEPTH				(TREBLE_GAINDEPTH / 2.0f)	// speaker is less directional that horn
 #define BASS_GAINDEPTH				(TREBLE_GAINDEPTH / 4.0f)	// speaker is less directional that horn
-
 
 static float s_fMinus4Pt5dB = powf(10.0f, -4.5f / 20.0f);
 
 RotaryModule::RotaryModule() :
 	m_Rotor4(this),
-	m_Crossover(true),
-	m_fMinDelay(MIN_DELAY)
+	m_Crossover(true)
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
 
@@ -123,26 +119,14 @@ RotaryModule::RotaryModule() :
 
 	configParam(Param_MicDistance, DIST_MIN, DIST_MAX, DIST_DEF,"Mic Distance", "m");
 	paramQuantities[Param_MicDistance]->displayPrecision = 2;
-	configParam(Param_MicAngle, 90.0f, 180.0f, 120.0f, "Angle between microphones", "deg");
+	configParam(Param_MicAngle, ANGLE_MIN, ANGLE_MAX, ANGLE_DEF, "Angle between microphones", "deg");
 	paramQuantities[Param_MicAngle]->snapEnabled = true;
-
-	configInput(InputCV_RampupHi, "Rampup Treble CV");
-	configInput(InputCV_RPMFastHi, "Fast RPM Treble CV");
-	configInput(InputCV_RPMSlowHi,"Slow RPM Treble CV");
-
-	configInput(InputCV_RampupMid, "Rampup Mid CV");
-	configInput(InputCV_RPMFastMid, "Fast RPM Mid CV");
-	configInput(InputCV_RPMSlowMid,"Slow RPM Mid CV");
-
-	configInput(InputCV_RampupLo, "Rampup Bass CV");
-	configInput(InputCV_RPMFastLo, "Fast RPM Bass CV");
-	configInput(InputCV_RPMSlowLo,"Slow RPM Bass CV");
 
 	configInput(Input_Mono, "Audio");
 	configInput(Input_Slow, "Slow Gate");
 	configInput(Input_Fast, "Fast Gate");
 	configInput(Input_Varispeed, "Varispeed CV");
-	configInput(Input_WheelSF, "Wheel Stop/Slow/Fast");
+	configInput(Input_WheelSF, "Wheel Stop/Slow/Fast CV");
 
 	configOutput(OutputL, "Left");
 	configOutput(OutputR, "Right");
@@ -155,11 +139,6 @@ RotaryModule::~RotaryModule()
 	delete m_pDelayLo;
 }
 
-// bool RotaryModule::VariSpeed() const
-// {
-// 	return m_bVariSpeed;
-// }
-
 void RotaryModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override*/
 {
 	m_fInvertedSamplerate = 1.0f / e.sampleRate;
@@ -169,6 +148,8 @@ void RotaryModule::onSampleRateChange(const SampleRateChangeEvent &e) /*override
 		m_pDelayMid->UpdateSamplerate(e.sampleRate);
 	if (m_pDelayLo != nullptr)
 		m_pDelayLo->UpdateSamplerate(e.sampleRate);
+	m_Crossover.Samplerate(e.sampleRate);
+	m_Rotor4.Samplerate(e.sampleRate);
 }
 
 void RotaryModule::processBypass(const ProcessArgs& args) /*override*/
@@ -195,9 +176,9 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 		m_bInitialized = true;
 		bForce = true;
 		m_fInvertedSamplerate = 1.0f / args.sampleRate;
-		m_pDelayHi = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY + 0.01);	// some extra delay to allow for impreecision in math
-		m_pDelayMid = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY + 0.01);	// some extra delay to allow for impreecision in math
-		m_pDelayLo = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY + 0.01);	// some extra delay to allow for impreecision in math
+		m_pDelayHi = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY);
+		m_pDelayMid = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY);
+		m_pDelayLo = new MilliSampleDelayLine(args.sampleRate, MAX_DELAY);
 		m_Crossover.Samplerate(args.sampleRate);
 		m_Rotor4.Samplerate(args.sampleRate);
 		if (m_bEnableMid)
@@ -219,6 +200,7 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 
 	HandleMicDistance(bForce);
 	HandleMicAngle(bForce);
+
 	HandleTargetSpeed(bForce);
 
 	bool bStereo = outputs[OutputL].isConnected() && outputs[OutputR].isConnected();
@@ -242,60 +224,60 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 
 	// reading output from delay lines
 	float fRotorL = 1.0f + m_Rotor4.OutputL(BandHi1);
-	float fGainFactor = 1.0f - TREBLE_GAINDEPTH * m_fDistanceGainFactor * fRotorL;
+	float fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorL;
 	lights[Light_Hi1L].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
-	float fOutL = m_pDelayHi->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+	float fOutL = m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 	float fOutR = 0.0f;
 	float fRotorR = 0.0f;
 	if (m_bStereo)
 	{
 		float fRotorR = 1.0f + m_Rotor4.OutputR(BandHi1);
-		fGainFactor = 1.0f - TREBLE_GAINDEPTH * m_fDistanceGainFactor * fRotorR;
+		fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorR;
 		lights[Light_Hi1R].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-		fOutR = m_pDelayHi->Read(m_fMinDelay + DIAMETER_DELAY * fRotorR) * fGainFactor;
+		fOutR = m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 	}
 	if (m_bDoubleHi)
 	{
 		fRotorL = 1.0f + m_Rotor4.OutputL(BandHi2);
-		fGainFactor = 1.0f - TREBLE_GAINDEPTH * m_fDistanceGainFactor * fRotorL;
+		fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorL;
 		lights[Light_Hi2L].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
-		fOutL += m_pDelayHi->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+		fOutL += m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 		fOutL *= s_fMinus4Pt5dB;
 		if (m_bStereo)
 		{
 			fRotorR = 1.0f + m_Rotor4.OutputR(BandHi2);
-			fGainFactor = 1.0f - TREBLE_GAINDEPTH * m_fDistanceGainFactor * fRotorR;
+			fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorR;
 			lights[Light_Hi2R].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-			fOutR += m_pDelayHi->Read(m_fMinDelay + DIAMETER_DELAY * fRotorR) * fGainFactor;
+			fOutR += m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 			fOutR *= s_fMinus4Pt5dB;
 		}
 	}
 
-	// Bass and Mid rotate in the opposite direction, swap L and R
+	// Bass and Mid rotate in the opposite direction, swap L and R rotor values
 	fRotorL = 1.0f + m_Rotor4.OutputR(BandLo);
-	fGainFactor = 1.0f - BASS_GAINDEPTH * m_fDistanceGainFactor * fRotorL;
+	fGainFactor = 1.0f - m_fBassGainDepth * fRotorL;
 	lights[Light_LoL].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
-	fOutL += m_pDelayLo->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+	fOutL += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 	if (m_bStereo)
 	{
 		fRotorR = 1.0f + m_Rotor4.OutputL(BandLo);
-		fGainFactor = 1.0f - BASS_GAINDEPTH * m_fDistanceGainFactor * fRotorR;
+		fGainFactor = 1.0f - m_fBassGainDepth * fRotorR;
 		lights[Light_LoR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-		fOutR += m_pDelayLo->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+		fOutR += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 	}
 
 	if (m_bEnableMid)
 	{
 		fRotorL = 1.0f + m_Rotor4.OutputR(BandMid);
-		fGainFactor = 1.0f - MID_GAINDEPTH * m_fDistanceGainFactor * fRotorL;
+		fGainFactor = 1.0f - m_fMidGainDepth * fRotorL;
 		lights[Light_MidL].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
-		fOutL += m_pDelayMid->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+		fOutL += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 		if (m_bStereo)
 		{
 			fRotorR = 1.0f + m_Rotor4.OutputL(BandMid);
-			fGainFactor = 1.0f - MID_GAINDEPTH * m_fDistanceGainFactor * fRotorR;
+			fGainFactor = 1.0f - m_fMidGainDepth * fRotorR;
 			lights[Light_MidR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-			fOutR += m_pDelayMid->Read(m_fMinDelay + DIAMETER_DELAY * fRotorL) * fGainFactor;
+			fOutR += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 		}
 	}
 	if (m_bStereo)
@@ -505,7 +487,10 @@ void RotaryModule::HandleMicDistance(bool bForce)
 	if (fParam != m_fParam_MicDistance || bForce)
 	{
 		m_fParam_MicDistance = fParam;
-		m_fDistanceGainFactor = MIN_DISTGAINFACTOR + (1.0f - (fParam - DIST_MIN) / (DIST_MAX - DIST_MIN)) * (1.0f - MIN_DISTGAINFACTOR);
+		float fDistanceGainFactor = MIN_DISTGAINFACTOR + (1.0f - (fParam - DIST_MIN) / (DIST_MAX - DIST_MIN)) * (1.0f - MIN_DISTGAINFACTOR);
+		m_fTrebleGainDepth = fDistanceGainFactor * TREBLE_GAINDEPTH;
+		m_fMidGainDepth = fDistanceGainFactor * MID_GAINDEPTH;
+		m_fBassGainDepth = fDistanceGainFactor * BASS_GAINDEPTH;
 	}
 }
 
@@ -580,7 +565,6 @@ void RotaryModule::LightsOff()
 
 #define SOCKET_X1			(7.08f)		// leftmost/rightmost socket
 
-// These X coordinates apply to left hand and right hand controls/inputs
 #define PARAM_BAND_FAST_X	(50.8f - 19.0f)
 #define PARAM_BAND_RAMPUP_X	(PARAM_BAND_FAST_X - 20.22f)
 #define PARAM_BAND_SLOW_X	(PARAM_BAND_FAST_X + 22.72f) // (73.52f)
@@ -591,8 +575,7 @@ void RotaryModule::LightsOff()
 #define SOCKET_X_FAST		(SOCKET_X1 + 1.0f + 2.0f * SOCKET_STEP)
 #define SOCKET_X_WHEEL		(SOCKET_X1 + 1.0f + 3.0f * SOCKET_STEP)
 #define SOCKET_X_VARISPEED	(SOCKET_X1 + 1.0f + 4.0f * SOCKET_STEP)
-// #define PARAM_DISTANCE_X	(SOCKET_X_VARISPEED + (TOTAL_WIDTH - SOCKET_X1 - SOCKET_X_VARISPEED) / 3.0f)
-// #define PARAM_ANGLE_X		(SOCKET_X_VARISPEED + 2.0f * (TOTAL_WIDTH - SOCKET_X1 - SOCKET_X_VARISPEED) / 3.0f)
+
 #define PARAM_MIC_X			(73.0f)
 #define PARAM_DISTANCE_Y	(SOCKET_BOTTOM - 45.0f)
 #define PARAM_ANGLE_Y		(SOCKET_BOTTOM - 31.0f)
@@ -640,7 +623,7 @@ RotaryWidget::RotaryWidget(RotaryModule* pModule) :
 	addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(SOCKET_X_FAST, BOTTOM_Y_SWITCH)), m_pModule, RotaryModule::Light_Fast));
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(SOCKET_X_FAST, SOCKET_BOTTOM)), m_pModule, RotaryModule::Input_Fast));
 
-	// Varispeed CV and Wheel S/F
+	// Varispeed CV and Wheel 0/S/F
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(SOCKET_X_VARISPEED, SOCKET_BOTTOM)), m_pModule, RotaryModule::Input_Varispeed));
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(SOCKET_X_WHEEL, SOCKET_BOTTOM)), m_pModule, RotaryModule::Input_WheelSF));
 
@@ -652,11 +635,11 @@ RotaryWidget::RotaryWidget(RotaryModule* pModule) :
 	addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(TOTAL_WIDTH - SOCKET_X1, SOCKET_Y_L)), m_pModule, RotaryModule::OutputL));
 	addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(TOTAL_WIDTH - SOCKET_X1, SOCKET_Y_R)), m_pModule, RotaryModule::OutputR));
 
+	// Feedback lights for slow and fast
 	m_pLightFBSlow = createLightCentered<LargeLight<YellowLight>>(mm2px(Vec(SOCKET_X_SLOW, FBLIGHTS_Y)), m_pModule, RotaryModule::Light_FBSlow);
 	m_pLightFBFast = createLightCentered<LargeLight<RedLight>>(mm2px(Vec(SOCKET_X_FAST, FBLIGHTS_Y)), m_pModule, RotaryModule::Light_FBFast);
 	addChild(m_pLightFBSlow);
 	addChild(m_pLightFBFast);
-
 }
 
 RotaryWidget::~RotaryWidget()

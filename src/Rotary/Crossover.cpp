@@ -1,11 +1,11 @@
 //
 // class Crossover
 // ===============
-// IIR filter for the crossover
-// Summing LP/HP-LP/HP bands with a -1 factor for one of the bands
-// results in a flat frequncy response without dips.
-// They are only 12dB/oct, but that's ok since it creates more band overlap with two
-// speakers rotating at slightly different speeds.
+// 2 way or 3 way crossover
+// Currently using 12 dB/oct filters only.
+// Summing of outputs results in a flat frequncy response without dips.
+//
+// Filter math is optimized for simd instructions (128 bit = 4 * float)
 //
 
 #include "plugin.hpp"
@@ -15,7 +15,7 @@
 Crossover::Crossover(bool b24dBPerOct) :
 	m_b24dBPerOct(b24dBPerOct)
 {
-	// frequenceys don't matter, just making sure everything is initialized in the filters
+	// frequencies don't matter, just making sure everything is initialized in the filters
 	Frequency(BassLoPass, 1000.0f);
 	Frequency(MidHiPass, 1000.0f);
 	Frequency(MidLoPass, 1000.0f);
@@ -100,27 +100,26 @@ void Crossover::CalcCoeffs(int nChannel)
 	const float omega = 2.0f * M_PI * m_fFrequency[nChannel] / m_fSamplerate;
 
 	// Compute coefficients for the normalized frequency
-	const float k = tanf(omega * 0.5f);
-	const float k2 = k * k;
-	const float denominator = k2 + 2.0f * k + 1.0f;
-	const float denominatorRecip = 1.0f / denominator;
+	const float fTan = tanf(omega * 0.5f);
+	const float fTanSq = fTan * fTan;
+	const float fInv = 1.0f / (fTanSq + 2.0f * fTan + 1.0f);
 
 	if (nChannel == BassLoPass || nChannel == MidLoPass)
 	{
 		// Lowpass coefficients
-		m_f4B0.s[nChannel] = k2 * denominatorRecip;
+		m_f4B0.s[nChannel] = fTanSq * fInv;
 		m_f4B1.s[nChannel] = 2.0f * m_f4B0.s[nChannel];
 		m_f4B2.s[nChannel] = m_f4B0.s[nChannel];
-		m_f4A1.s[nChannel] = 2.0f * (k2 - 1.0f) * denominatorRecip;
-		m_f4A2.s[nChannel] = (k2 - 2.0f * k + 1.0f) * denominatorRecip;
+		m_f4A1.s[nChannel] = 2.0f * (fTanSq - 1.0f) * fInv;
+		m_f4A2.s[nChannel] = (fTanSq - 2.0f * fTan + 1.0f) * fInv;
 	}
 	else
-	{ // HIGHPASS
+	{
 		// Highpass coefficients
-		m_f4B0.s[nChannel] = denominatorRecip;
+		m_f4B0.s[nChannel] = fInv;
 		m_f4B1.s[nChannel] = -2.0f * m_f4B0.s[nChannel];
 		m_f4B2.s[nChannel] = m_f4B0.s[nChannel];
-		m_f4A1.s[nChannel] = 2.0f * (k2 - 1.0f) * denominatorRecip;
-		m_f4A2.s[nChannel] = (k2 - 2.0f * k + 1.0f) * denominatorRecip;
+		m_f4A1.s[nChannel] = 2.0f * (fTanSq - 1.0f) * fInv;
+		m_f4A2.s[nChannel] = (fTanSq - 2.0f * fTan + 1.0f) * fInv;
 	}
 }

@@ -10,6 +10,5 @@ void ABDisplay::drawLayer(const rack::widget::Widget::DrawArgs& args, int nLayer
 {
 	if (nLayer== 1)
 		draw(args);
-	// SvgWidget::drawLayer(args, nLayer);
 }
 

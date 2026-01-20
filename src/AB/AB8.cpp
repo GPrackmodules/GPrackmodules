@@ -1,8 +1,6 @@
 #include "plugin.hpp"
 #include "AB8.h"
 
-#include <ChainMixerCommon.h>
-
 AB8Module::AB8Module()
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);

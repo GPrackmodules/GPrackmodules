@@ -1,3 +1,13 @@
+//
+// MilliSampleDelayLine class
+// ==========================
+// Audio delay that supportsd delay adjustment in millisamples (or any
+// other fraction of a sample, defined by the N_SUBSAMPLE define).
+//
+// The impulse responses used to create the < 1 sample component of the delay value
+// can be exchanged in operation.
+//
+
 #include "MilliSampleDelayLine.h"
 
 MilliSampleDelayLine::MilliSampleDelayLine(float fSamplerate, float dMaxDelayS) :
@@ -18,7 +28,7 @@ void MilliSampleDelayLine::Feed(float fInput)
 {
 	m_pDelayLine[m_nWriteIndex] = fInput;
 	if (m_nWriteIndex >= 0 && m_nWriteIndex < N_TAPS)
-		m_pDelayLine[m_nWriteIndex + m_nMaxDelaySamples] = fInput;
+		m_pDelayLine[m_nWriteIndex + m_nBufferWrap] = fInput;
 }
 
 float MilliSampleDelayLine::Read(float fDelayS)
@@ -33,7 +43,7 @@ float MilliSampleDelayLine::Read(float fDelayS)
 
 	int nReadIndex = m_nWriteIndex - nDelaySamples - N_TAPS;
 	if (nReadIndex < 0)
-		nReadIndex += m_nMaxDelaySamples;
+		nReadIndex += m_nBufferWrap;
 
 	float* pDelayLine = m_pDelayLine + nReadIndex;
 	float* pIR = m_ppIRs[nDelayFraction];
@@ -46,7 +56,7 @@ float MilliSampleDelayLine::Read(float fDelayS)
 
 void MilliSampleDelayLine::Advance()
 {
-	if (++m_nWriteIndex >= m_nMaxDelaySamples)
+	if (++m_nWriteIndex >= m_nBufferWrap)
 		m_nWriteIndex = 0;
 }
 
@@ -54,15 +64,14 @@ void MilliSampleDelayLine::UpdateSamplerate(float fSamplerate)
 {
 	m_fSamplerate = fSamplerate;
 	m_nMaxDelaySamples = static_cast<int>(m_fMaxDelayS * m_fSamplerate) + 1;
+	m_nBufferWrap = m_nMaxDelaySamples + N_TAPS;
 
-	if (m_pDelayLine != nullptr)
-	{
-		delete m_pDelayLine;
-		delete m_pDelayLine;
-	}
+
 	// create the delay lines
-	m_pDelayLine = new float[m_nMaxDelaySamples + MaxTaps() + 1]; // delay line allows placing FIR anywhere up MaxDelaySamples - 1
-	memset(m_pDelayLine, 0, (m_nMaxDelaySamples + MaxTaps() + 1) * sizeof(float));
+	int n = m_nBufferWrap + N_TAPS + 1; // delay line allows placing FIR anywhere up MaxDelaySamples - 1
+	delete m_pDelayLine;
+	m_pDelayLine = new float[n];
+	memset(m_pDelayLine, 0, n * sizeof(float));
 	BuildIRs();
 	UpdateIRs();
 	DeleteOldIRs();

@@ -1,3 +1,13 @@
+//
+// MilliSampleDelayLine class
+// ==========================
+// Audio delay that supportsd delay adjustment in millisamples (or any
+// other fraction of a sample, defined by the N_SUBSAMPLE define).
+//
+// The impulse responses used to create the < 1 sample component of the delay value
+// can be exchanged in operation.
+//
+
 #pragma once
 
 #include "plugin.hpp"
@@ -14,8 +24,6 @@ public:
 	~MilliSampleDelayLine();
 
 public:
-	static int MaxTaps() { return 1023; }
-
 	void Feed(float fInput);
 	float Read(float fDelayS);
 	void Advance();
@@ -37,6 +45,7 @@ private:
 	const float m_fMaxDelayS;
 	float m_fSamplerate;
 	int m_nMaxDelaySamples = 0;		// enough for MaxDelayS
+	int m_nBufferWrap = 0;
 
 	float* m_pDelayLine = nullptr;	// array of float pointers to the delays lines for each channel
 

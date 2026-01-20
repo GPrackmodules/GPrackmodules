@@ -1,10 +1,10 @@
 //
 // Rotor4 class
 // ============
-// Handles rotation with slow/fast/vari speeds and Ramp up/Ramp down
-// Yields sine values (+/- 1.0f) for left and tight channels
+// Calculates four different rotations with common slow/fast/varispeed parameters.
+// Each roatation can have different fast, slow target RPM values and different ramp times.
+// Yields four sine values (+/- 1.0f) for left and right channels each
 //
-
 
 #include "plugin.hpp"
 #include "Rotor4.h"
@@ -27,6 +27,35 @@ void Rotor4::Samplerate(float fSamplerate)
 		return;
 	m_fSamplerate = fSamplerate;
 	m_fInvertedSamplerate = 1.0f / fSamplerate;
+	for (int c = 0; c < ROTOR4_BANDS; c++)
+	{
+		m_fFastPhaseStep[c] = m_fFastRPM[c] * s_fRPM2Hz * m_fInvertedSamplerate;
+		m_fSlowPhaseStep[c] = m_fSlowRPM[c] * s_fRPM2Hz * m_fInvertedSamplerate;
+		switch (m_eTargetSpeed)
+		{
+			case SpeedTarget::Slow:
+				m_fTargetPhaseStep[c] = m_fSlowPhaseStep[c];
+				break;
+
+			case SpeedTarget::Fast:
+				m_fTargetPhaseStep[c] = m_fFastPhaseStep[c];
+				break;
+
+			case SpeedTarget::VariSpeed:
+				m_fTargetPhaseStep[c] = m_fVariSpeed * m_fFastPhaseStep[c];
+				break;
+
+			default:
+				m_fTargetPhaseStep[c] = 0;
+				break;
+		}
+		m_f4PhaseStep.s[c] = m_fTargetPhaseStep[c];
+		m_f4PhaseStepDelta.s[c] = 0.0f;
+		m_eFadeMode[c] = FadeMode::Stopped;
+	}
+	while (!m_queRamp.empty())
+		m_queRamp.pop();
+	Update(m_eTargetSpeed, m_fVariSpeed);
 }
 
 void Rotor4::SlowRPM(int nChannel, float fRPM)
@@ -61,19 +90,6 @@ void Rotor4::TargetSpeed(SpeedTarget eTarget, float fVariSpeed /*= 0.0f*/)
 	Update(eTarget, fVariSpeed);
 }
 
-void Rotor4::Frequency(int nChannel, float fHertz)
-{
-	m_f4Frequency[nChannel] = fHertz;
-	m_f4PhaseStep[nChannel] = fHertz * m_fInvertedSamplerate;
-}
-
-void Rotor4::Frequency(const simd::float_4& f4Hertz, const simd::float_4& f4TargetHertz)
-{
-	m_f4Frequency = f4Hertz;
-	m_f4TargetFrequency = f4TargetHertz;
-	m_f4PhaseStep = f4Hertz * m_fInvertedSamplerate;
-}
-
 void Rotor4::Update(SpeedTarget eTarget, float fVariSpeed)
 {
 	switch (eTarget)
@@ -98,8 +114,8 @@ void Rotor4::Update(SpeedTarget eTarget, float fVariSpeed)
 				m_fTargetPhaseStep[i] = 0.0f;
 			break;
 	}
-	for (int i = 0; i < 4; i++)
-		StartRamping(i, eTarget);
+	for (int i = ROTOR4_BANDS - 1; i >= 0; --i)	// push in reverse order, so hi bands start ramping first
+		m_queRamp.emplace(i, eTarget);
 	m_eTargetSpeed = eTarget;
 	m_fVariSpeed = fVariSpeed;
 }
@@ -107,7 +123,7 @@ void Rotor4::Update(SpeedTarget eTarget, float fVariSpeed)
 void Rotor4::StartRamping(int nChannel, SpeedTarget eTargetSpeed)
 {
 	m_f4FadeStartPhaseStep.s[nChannel] = m_f4PhaseStep.s[nChannel];
-	m_nFadeStartFrame = m_pModule->CurrentFrame();
+	m_nFadeStartFrame[nChannel] = m_pModule->CurrentFrame();
 	if (m_fTargetPhaseStep[nChannel] == m_f4PhaseStep.s[nChannel])
 	{
 		m_eFadeMode[nChannel] = FadeMode::Stopped;
@@ -175,15 +191,25 @@ void Rotor4::PhaseOffsetLR(float fDegree)
 			if (m_eFadeMode[c] == FadeMode::Stopped)
 				m_f4Phase.s[c] = m_fParkPosition;
 			else if (m_eFadeMode[c] == FadeMode::RampDown)
-			 	StartRamping(c, SpeedTarget::Stop); // recalc Ramp down to park position
+				m_queRamp.emplace(c, SpeedTarget::Stop);
 		}
 	}
 }
 
 void Rotor4::Advance()
 {
+	if (!m_queRamp.empty())
+	{
+		// Start ramping, one at a time
+		pair<int, SpeedTarget> p = m_queRamp.front();
+		m_queRamp.pop();
+		StartRamping(p.first, p.second);
+		printf("Start ramp %d\n", p.first);
+	}
 	// Rampup/Rampdown
-	simd::float_4 f4FadeFrames = (float)(m_pModule->CurrentFrame() - m_nFadeStartFrame);
+	simd::float_4 f4FadeFrames;
+	for (int i = 0; i < ROTOR4_BANDS; i++)
+		f4FadeFrames.s[i] = (float)(m_pModule->CurrentFrame() - m_nFadeStartFrame[i]);
 	m_f4PhaseStep = simd::ifelse(m_f4PhaseStepDelta != 0.0f, m_f4FadeStartPhaseStep + f4FadeFrames * m_f4PhaseStepDelta, m_f4PhaseStep);
 	for (int c = 0; c < ROTOR4_BANDS; c++)
 	{
@@ -197,7 +223,6 @@ void Rotor4::Advance()
 				m_eFadeMode[c] = FadeMode::Stopped;
 				if (m_fTargetPhaseStep[c] == 0.0f)
 				{
-					// printf("%d: Stopped at %f\n", c + 1, m_f4Phase.s[c]); // !!!!!!!!!!!!!!!!!!!
 					m_f4Phase.s[c] = m_fParkPosition;
 				}
 			}

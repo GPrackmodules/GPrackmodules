@@ -2,10 +2,10 @@
 // class Crossover
 // ===============
 // 2 way or 3 way crossover
-// Currently usinhg 12 dB/oct filters
+// Currently using 12 dB/oct filters only.
 // Summing of outputs results in a flat frequncy response without dips.
 //
-// Filter math is optimixrf for simd instructions (128 bit = 4 * float)
+// Filter math is optimized for simd instructions (128 bit = 4 * float)
 //
 
 #pragma once
@@ -18,7 +18,7 @@ class Crossover
 ////////////////////////////////////////////////////////////
 
 public:
-	Crossover(bool b24dBPerOct);
+	Crossover(bool b24dBPerOct); // parameter reserved for future expansion
 
 ////////////////////////////////////////////////////////////
 /// Public API
@@ -29,7 +29,9 @@ public:
 	void ThreeWay(float fSplitHzLo, float fSplitHzHi);
 	void Samplerate(float fSamplerate);
 	void Reset();
+	// Input
 	void Process(float fInput);
+	// Outputs
 	float Bass() const;
 	float Mid() const;
 	float Treble() const;
@@ -56,7 +58,7 @@ private:
 		CrossoverBands	// number of bands
 	};
 
-	const bool m_b24dBPerOct;
+	const bool m_b24dBPerOct;		// Currently without function, crossover is 12 dB/oct
 	float m_fSamplerate = 0.0f;
 
 	bool m_bThreeWay = false;
@@ -66,7 +68,7 @@ private:
 	// Feedback
 	simd::float_4 m_f4A1;
 	simd::float_4  m_f4A2;
-	// // Feedworward
+	// // Feedforward
 	simd::float_4 m_f4B0;
 	simd::float_4 m_f4B1;
 	simd::float_4 m_f4B2;
