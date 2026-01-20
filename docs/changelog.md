@@ -1,5 +1,14 @@
 <h1>GPrackmodules Change Log</h1>
 
+<h2>Version 2.1.0</h2>
+Date: t.b.d
+
+  * New Module Rotary - a rotating speaker simulation
+  * New module AB8 - an 8 channel A/B switcher for audio and CV
+  * Stereo Chorus: CPU optimizations
+  * AB4: CV output reflecting A/B state
+  * Chained Mixer Master: fixed dead output if only right output was connected
+
 <h2>Version 2.0.1</h2>
 Date: Jun 29, 2025
 
@@ -15,7 +24,7 @@ Date: Jun 29, 2025
 Date: Jun 16, 2025
 
 Initial Release containing these modules:
-*   StereoChorus
+  * StereoChorus
   * Chained Mixer Channel
   * Chained Mixer Master
   * Chained Mixer Aux
