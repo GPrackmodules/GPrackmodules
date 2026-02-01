@@ -110,9 +110,9 @@ stereo effect, especially at close distances. Smaller angles produce a more subt
 
 <h2>Notes</h2>
 
-While Rotary emulates the effect of rotating speakers pretty convincingly, it is by no means a
-true physical simulation. Various shortcuts have been taken in the interest of keeping CPU usage
-at bay.
+While Rotary emulates the effect of rotating speakers pretty convincingly to the untrained ear,
+it is by no means a true physical simulation. Various shortcuts have been taken in the interest
+of keeping CPU usage at bay.
 
 Besides, there is no emulation of the tube amplifier in the classic Leslie cabinets or of
 speaker characteristics. Being in a modular synthesizer, these can be added externally with
