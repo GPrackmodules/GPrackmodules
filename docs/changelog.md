@@ -1,7 +1,7 @@
 <h1>GPrackmodules Change Log</h1>
 
 <h2>Version 2.1.0</h2>
-Date: t.b.d
+Date: Feb 15, 2026
 
   * New Module Rotary - a rotating speaker simulation
   * New module AB8 - an 8 channel A/B switcher for audio and CV
