@@ -8,7 +8,8 @@
 
 Fade::Fade(float& rCoefficient, float fMilliseconds, float fInitialValue) :
 	m_rCoefficient(rCoefficient),
-	m_fFadeMs(fMilliseconds)
+	m_fFadeMs(fMilliseconds),
+	m_fTarget(fInitialValue)
 {
 	rCoefficient = fInitialValue;
 }
@@ -21,7 +22,7 @@ void Fade::SetSamplerate(float fSamplerate)
 
 void Fade::Start(float fTarget)
 {
-	if (fTarget == m_rCoefficient)
+	if (fTarget == m_fTarget)
 		return;
 
 	if (fTarget < m_rCoefficient)
@@ -33,6 +34,11 @@ void Fade::Start(float fTarget)
 	{
 		m_bFadingDown = false;
 		m_bFadingUp = true;
+	}
+	else
+	{
+		m_bFadingDown = false;
+		m_bFadingUp = false;
 	}
 	m_fFadeStep = (fTarget - m_rCoefficient) * m_fInvertedSteps;
 	m_fTarget = fTarget;

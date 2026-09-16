@@ -24,17 +24,17 @@ MilliSampleDelayLine::~MilliSampleDelayLine()
 	delete [] m_pDelayLine;
 }
 
-void MilliSampleDelayLine::Feed(float fInput)
+void MilliSampleDelayLine::Feed(float fInput) const
 {
 	m_pDelayLine[m_nWriteIndex] = fInput;
 	if (m_nWriteIndex >= 0 && m_nWriteIndex < N_TAPS)
 		m_pDelayLine[m_nWriteIndex + m_nBufferWrap] = fInput;
 }
 
-float MilliSampleDelayLine::Read(float fDelayS)
+float MilliSampleDelayLine::Read(float fDelayS) const
 {
 	assert(fDelayS >= 0.0f);
-	int64_t nDelaySamplesSubsample = static_cast<int64_t>(fDelayS * m_fSamplerate * N_SUBSAMPLE + 0.5);
+	auto nDelaySamplesSubsample = i64round(fDelayS * m_fSamplerate * N_SUBSAMPLE);
 	int nDelaySamples = static_cast<int>(nDelaySamplesSubsample / N_SUBSAMPLE);
 	int nDelayFraction = static_cast<int>(nDelaySamplesSubsample % N_SUBSAMPLE);
 
@@ -79,16 +79,16 @@ void MilliSampleDelayLine::UpdateSamplerate(float fSamplerate)
 
 bool MilliSampleDelayLine::BuildIRs(float fCutoffFrequency /*= 0.45f*/)
 {
-	size_t nFullLength = N_SUBSAMPLE * N_TAPS;
+	int nFullLength = N_SUBSAMPLE * N_TAPS;
 	vector<int> vFactor(nFullLength, 0);
 	vector<float> vFullFilter(nFullLength, 0.0f);
 
 	fCutoffFrequency /= static_cast<float>(N_SUBSAMPLE);
 
-	for(size_t i = 0; i < nFullLength; i++)
+	for(int i = 0; i < nFullLength; i++)
 		vFactor[i] = static_cast<int>(i - nFullLength / 2);
 
-	for(size_t i = 0; i < nFullLength / 2; i++)
+	for(int i = 0; i < nFullLength / 2; i++)
 	{
 		float fSinC; // sin(x) / X
 		if (vFactor[i] == 0)
@@ -104,10 +104,10 @@ bool MilliSampleDelayLine::BuildIRs(float fCutoffFrequency /*= 0.45f*/)
 	}
 	dsp::blackmanHarrisWindow(vFullFilter.data(), nFullLength);
 
-	float ** ppNewIRs = new float*[N_SUBSAMPLE];
+	auto ppNewIRs = new float*[N_SUBSAMPLE];
 	for (size_t nSub = 0; nSub < N_SUBSAMPLE; nSub++)
 	{
-		float* pTaps = new float[N_TAPS];
+		auto pTaps = new float[N_TAPS];
 		for (size_t nTap = 0; nTap < N_TAPS; nTap++)
 			pTaps[N_TAPS - 1 - nTap] = vFullFilter[nTap * N_SUBSAMPLE + nSub];
 		ppNewIRs[N_SUBSAMPLE - 1 - nSub] = pTaps;
@@ -177,6 +177,6 @@ void MilliSampleDelayLine::UpdateIRs()
 	{ // scope for lock_guard
 		lock_guard<mutex> lg(m_mtxOldIRs);
 		if (ppOldIRs != nullptr)
-			m_lstOldIRs.push_back(std::pair<int, float**>(N_SUBSAMPLE, ppOldIRs));
+			m_lstOldIRs.emplace_back(N_SUBSAMPLE, ppOldIRs);
 	}
 }

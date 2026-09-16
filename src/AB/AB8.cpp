@@ -1,10 +1,10 @@
-#include "plugin.hpp"
+#include "plugin.h"
 #include "AB8.h"
 
 AB8Module::AB8Module()
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
-	configParam(ParamAB, 0.f, 1.f, 0.f, "");
+	configParam(ParamAB, 0.f, 1.f, 0.f, "A/B");
 	configInput(InputA1, "A1");
 	configInput(InputA2, "A2");
 	configInput(InputA3, "A3");
@@ -222,7 +222,7 @@ AB8Widget::AB8Widget(AB8Module* pModule)
 	addOutput(createOutputCentered<ThemedPJ301MPort>(vecBottomRight.plus(mm2px(Vec(-fX, fY += 10.16f))), pModule, AB8Module::Output8));
 }
 
-void AB8Widget::SetState(bool bB)
+void AB8Widget::SetState(bool bB) const
 {
 	if (bB)
 		m_pSvgWidget->setSvg(m_pSvgB);

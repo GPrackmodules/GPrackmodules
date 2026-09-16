@@ -20,7 +20,7 @@ ChorusDelayLine::~ChorusDelayLine()
 	}
 }
 
-void ChorusDelayLine::Feed(float fL, float fR)
+void ChorusDelayLine::Feed(float fL, float fR) const
 {
 	m_ppDelayLines[0][m_nWriteIndex] = fL;
 	m_ppDelayLines[1][m_nWriteIndex] = fR;
@@ -31,10 +31,10 @@ void ChorusDelayLine::Feed(float fL, float fR)
 	}
 }
 
-float ChorusDelayLine::Read(int nChannel, float fDelayS)
+float ChorusDelayLine::Read(int nChannel, float fDelayS) const
 {
 	assert(fDelayS >= 0.0f);
-	int64_t nDelaySamplesSubsample = static_cast<int64_t>(fDelayS * m_fSamplerate * N_SUBSAMPLE + 0.5);
+	auto nDelaySamplesSubsample = i64round(fDelayS * m_fSamplerate * N_SUBSAMPLE);
 	int nDelaySamples = static_cast<int>(nDelaySamplesSubsample / N_SUBSAMPLE);
 	int nDelayFraction = static_cast<int>(nDelaySamplesSubsample % N_SUBSAMPLE);
 
@@ -85,16 +85,16 @@ void ChorusDelayLine::UpdateSamplerate(float fSamplerate)
 
 bool ChorusDelayLine::BuildIRs(float fCutoffFrequency /*= 0.45f*/)
 {
-	size_t nFullLength = N_SUBSAMPLE * N_TAPS;
+	int nFullLength = N_SUBSAMPLE * N_TAPS;
 	vector<int> vFactor(nFullLength, 0);
 	vector<float> vFullFilter(nFullLength, 0.0f);
 
 	fCutoffFrequency /= static_cast<float>(N_SUBSAMPLE);
 
-	for(size_t i = 0; i < nFullLength; i++)
+	for(int i = 0; i < nFullLength; i++)
 		vFactor[i] = static_cast<int>(i - nFullLength / 2);
 
-	for(size_t i = 0; i < nFullLength / 2; i++)
+	for(int i = 0; i < nFullLength / 2; i++)
 	{
 		float fSinC; // sin(x) / X
 		if (vFactor[i] == 0)
@@ -110,10 +110,10 @@ bool ChorusDelayLine::BuildIRs(float fCutoffFrequency /*= 0.45f*/)
 	}
 	dsp::blackmanHarrisWindow(vFullFilter.data(), nFullLength);
 
-	float ** ppNewIRs = new float*[N_SUBSAMPLE];
+	auto ppNewIRs = new float*[N_SUBSAMPLE];
 	for (size_t nSub = 0; nSub < N_SUBSAMPLE; nSub++)
 	{
-		float* pTaps = new float[N_TAPS];
+		auto pTaps = new float[N_TAPS];
 		for (size_t nTap = 0; nTap < N_TAPS; nTap++)
 			pTaps[N_TAPS - 1 - nTap] = vFullFilter[nTap * N_SUBSAMPLE + nSub];
 		ppNewIRs[N_SUBSAMPLE - 1 - nSub] = pTaps;
@@ -183,6 +183,6 @@ void ChorusDelayLine::UpdateIRs()
 	{ // scope for lock_guard
 		lock_guard<mutex> lg(m_mtxOldIRs);
 		if (ppOldIRs != nullptr)
-			m_lstOldIRs.push_back(std::pair<int, float**>(N_SUBSAMPLE, ppOldIRs));
+			m_lstOldIRs.emplace_back(N_SUBSAMPLE, ppOldIRs);
 	}
 }

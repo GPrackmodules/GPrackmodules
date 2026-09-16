@@ -1,10 +1,10 @@
-#include "plugin.hpp"
+#include "plugin.h"
 #include "AB4.h"
 
 AB4Module::AB4Module()
 {
 	config(NumParams, NumInputs, NumOutputs, NumLights);
-	configParam(ParamAB, 0.f, 1.f, 0.f, "");
+	configParam(ParamAB, 0.f, 1.f, 0.f, "A/B");
 	configInput(InputA1, "A1");
 	configInput(InputA2, "A2");
 	configInput(InputA3, "A3");
@@ -155,7 +155,7 @@ AB4Widget::AB4Widget(AB4Module* pModule)
 	addOutput(createOutputCentered<ThemedPJ301MPort>(vecBottomRight.plus(mm2px(Vec(-fX, fY += 11.0f))), pModule, AB4Module::Output4));
 }
 
-void AB4Widget::SetState(bool bB)
+void AB4Widget::SetState(bool bB) const
 {
 	if (bB)
 		m_pSvgWidget->setSvg(m_pSvgB);

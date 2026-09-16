@@ -8,28 +8,36 @@
 
 #pragma once
 
-#include "plugin.hpp"
+#include "plugin.h"
+
+//
+// Knob base classes
+//
 
 class FilledKnob : public RoundKnob
 {
 protected:
-	FilledKnob(int mm);
+	FilledKnob(int nMillimeter);
 
-private:
-	// const int m_mm;
+	// Nothing else here, since FilledKnob (unlike PointyKnob) doesn't have different SVGs for light and dark mode
 };
 
 class PointyKnob : public RoundKnob
 {
 protected:
-	PointyKnob(int mm);
+	PointyKnob(int nMillimeter);
+
+public:
 	void step() override;
 
 private:
-	const int m_mm;
+	const int m_nMillimeter;
 	bool m_bDarkMode;
 };
 
+//
+// Different types and sizes of knobs
+//
 
 class FilledKnob16mm : public FilledKnob
 {
@@ -46,23 +54,17 @@ public:
 class PointyKnob8mm : public PointyKnob
 {
 public:
-	PointyKnob8mm() : PointyKnob(8)
-	{
-	};
+	PointyKnob8mm() : PointyKnob(8) {};
 };
 
 class PointyKnob10mm : public PointyKnob
 {
 public:
-	PointyKnob10mm() : PointyKnob(10)
-	{
-	};
+	PointyKnob10mm() : PointyKnob(10) {};
 };
 
 class PointyKnob12mm : public PointyKnob
 {
 public:
-	PointyKnob12mm() : PointyKnob(12)
-	{
-	};
+	PointyKnob12mm() : PointyKnob(12) {};
 };

@@ -1,8 +1,9 @@
-<h1>Rotary</h1>
+<h1>Rotary — Enhanced Rotating Speaker emulation</h1>
 
-**Rotary** is a module in the GP plugin for VCV Rack 2
+**Rotary** is a module in the GPaudio plugin for VCV Rack 2
 
-![Rotary Module](Rotary.png "The Rotary Module") &nbsp; &nbsp; &nbsp;![Rotary Module](Rotary-dark.png "The Rotary Module")
+![Rotary Module](Rotary.png "The Rotary Module") &nbsp; &nbsp; &nbsp;
+![Rotary Module](Rotary-dark.png "The Rotary Module")
 
 <h2>Features</h2>
 
@@ -19,17 +20,17 @@ with a VariSpeed CV input.
 The position of the microphones for the stereo output can be adjusted in distance and angle between the
 microphones.
 
-Slow and Fast mode can be selected in three ways:
+Slow and Fast modes can be selected in three ways:
 * Buttons on the Rotary front panel
 * CV inputs for Slow and Fast
 * With a CV input for a modulation wheel or any other CV source.
 
 Two large lights above the CV inputs show if slow speed (yellow) or fast speed (red) is selected.
 
-<h2>Sockets</h2>
+<h2>=Inputs and Outputs</h2>
 
-* The mono input signal is fed into the **IN** socket in the lower left corner
-of the front panel. The **IN** socket will accept all signals from polyphonic cables
+* The mono input signal is fed into the **IN** port in the lower left corner
+of the front panel. The **IN** port will accept all signals from polyphonic cables
 and sum them together before they are processed.
 * The processed signals are provided in the **OUT** section in the lower right corner.
 Rotary provides left and right monophonoic audio signals.
@@ -37,21 +38,21 @@ Rotary provides left and right monophonoic audio signals.
 CV input states are logical ORed with the values of the respective buttons and the
 Wheel CV input state. Fast speed has priority over slow speed.
 * The **WHEEL 0-S-F** CV input is meant to be used with a modulation wheel, but of
-course can be controlled by any CV source. It is not a linear speed control, instead
-values between 33% and 66% (of 10 Volts) select slow speed, values above 66% select fast
+course can be controlled by any CV source. It is not a linear speed control, values
+between 33% and 66% (of 10 Volts) select slow speed, values above 66% select fast
 speed.
 * The **VARISPEED** CV input offers full control over rotating speed. Voltages
 between 0 V and 10 V are translated into 0 to 100 percent of the Fast RPM settings
-of each frequency band. If a cable is connected to the Varispeed CV input, all Slow
+in each frequency band. If a cable is connected to the Varispeed CV input, all Slow
 and Fast states controlled by buttons or CV are ignored and the Slow and Fast lights
 disappear.
 
-<h2>Parameters</h2>
+<h2>Controls</h2>
 
 <h3>Frequency Bands</h3>
 
 The front panel shows three frequency bands **TREBLE**, **MID** and **BASS**. Each
-band has knobs for Ramp, Slow and Fast. The Treble and Mid bands have additional
+band has knobs for Ramp, Slow and Fast. The Treble and Mid frequency bands have additional
 parameters.
 
 <h4>RAMP knob</h4>
@@ -69,7 +70,7 @@ respective mode. The speed is controller in RPM (rotations per minute).
 <h4>DOUBLE button (Treble only)</h4>
 
 The **DOUBLE** button in the Treble section activates a second rotating horn in the treble section.
-It's Slow and Fast speeds and Ramp time are slightly different from the first
+Its Slow and Fast speeds and Ramp time are slightly different from the first
 horn. Therefore, the two horns go out of sync quickly, providing a more complex rich
 sound. Turning Double on or off can result in a little click, so the parameter should not
 be used for automation while audio is playing.
@@ -82,7 +83,7 @@ crossover frequency is 800 Hz. In three-way mode (Enable On) the crossover point
 250 Hz and 2000 Hz. Turning Enable on or off can result in an audible click, so the parameter
 should not be used for automation while audio is playing.
 
-<h3>Other Parameters</h3>
+<h3>Other Controls</h3>
 
 <h4>FAST and SLOW buttons</h4>
 

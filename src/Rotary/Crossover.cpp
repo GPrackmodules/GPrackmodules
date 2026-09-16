@@ -8,12 +8,17 @@
 // Filter math is optimized for simd instructions (128 bit = 4 * float)
 //
 
-#include "plugin.hpp"
+#include "plugin.h"
 #include "Crossover.h"
 #include <cmath>
 
 Crossover::Crossover(bool b24dBPerOct) :
-	m_b24dBPerOct(b24dBPerOct)
+	m_b24dBPerOct(b24dBPerOct),
+	m_f4A1(0.0f),
+	m_f4A2(0.0f),
+	m_f4B0(0.0f),
+	m_f4B1(0.0f),
+	m_f4B2(0.0f)
 {
 	// frequencies don't matter, just making sure everything is initialized in the filters
 	Frequency(BassLoPass, 1000.0f);
@@ -97,7 +102,7 @@ void Crossover::Frequency(int nChannel, float fFrequency)
 
 void Crossover::CalcCoeffs(int nChannel)
 {
-	const float omega = 2.0f * M_PI * m_fFrequency[nChannel] / m_fSamplerate;
+	const float omega = 2.0f * M_PIf * m_fFrequency[nChannel] / m_fSamplerate;
 
 	// Compute coefficients for the normalized frequency
 	const float fTan = tanf(omega * 0.5f);

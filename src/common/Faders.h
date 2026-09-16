@@ -4,10 +4,13 @@
 #define FADER_STEPS_F	(768.f)
 #define FADER_ZERO_DB	(578.0f)
 
-#define	MIN_PANBAL			-100
-#define	MAX_PANBAL			100
+#define	MIN_PANBAL			(-100)
+#define	MIN_PANBAL_F		(-100.0f)
+#define	MAX_PANBAL			(100)
+#define	MAX_PANBAL_F		(100.0f)
 
 #define SEND_STEPS			256
+#define SEND_STEPS_F		(static_cast<float>(SEND_STEPS))
 
 struct FaderGainQuantity : public ParamQuantity
 {
@@ -40,7 +43,6 @@ struct SendQuantity : public ParamQuantity
 	void setDisplayValueString(std::string s) override;
 };
 
-
 class GPaudioFader : public SvgSlider
 {
 protected:
@@ -53,11 +55,8 @@ protected:
 
 public:
 	GPaudioFader(FaderLength eFaderLength);
-	void SetFaderLength(FaderLength nMillimeter);
 	void UpdateDarkMode();
 	static float GainFactor(float fParam);
-
-protected:
 	void drawLayer(const widget::Widget:: DrawArgs &args, int nLayer) override;
 
 private:

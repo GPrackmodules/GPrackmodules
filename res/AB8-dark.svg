@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="57.831233"
-     inkscape:cy="282.59017"
+     inkscape:cx="54.548237"
+     inkscape:cy="201.77797"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -71,7 +71,7 @@
          id="path59317" />
     </g>
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:#2c2c24;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.650064;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:#28282c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.650064;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect420"
        width="30.48"
        height="128.77928"
@@ -98,28 +98,28 @@
     <rect
        id="rect65117"
        width="9.1709061"
-       height="85.808998"
+       height="86.808998"
        x="10.654547"
        y="201.17598"
-       style="fill:#50504e;fill-opacity:1;stroke-width:0.356323"
-       ry="2.5854769" />
+       style="fill:#50504e;fill-opacity:1;stroke-width:0.358393"
+       ry="2.6156075" />
     <rect
        id="rect65117-6"
        width="9.1709061"
-       height="85.808998"
+       height="86.808998"
        x="0.91454697"
-       y="-286.98499"
-       style="fill:#424240;fill-opacity:1;stroke-width:0.356323"
+       y="-287.98499"
+       style="fill:#424240;fill-opacity:1;stroke-width:0.358393"
        transform="scale(1,-1)"
-       ry="2.0647101" />
+       ry="2.0887718" />
     <rect
        id="rect65117-6-7"
        width="9.1709061"
-       height="85.808998"
+       height="86.808998"
        x="20.393999"
        y="201.17598"
-       style="fill:#848483;fill-opacity:1;stroke-width:0.356323"
-       ry="1.8446062" />
+       style="fill:#aaaaaa;fill-opacity:1;stroke-width:0.358393"
+       ry="1.8661028" />
     <g
        aria-label="P"
        id="text41381"
@@ -156,7 +156,7 @@
     <g
        aria-label="SW"
        id="text161941"
-       style="font-size:3px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';letter-spacing:-0.0185208px;stroke-width:0.264583;fill:#ffffff;fill-opacity:1"
+       style="font-size:3px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';letter-spacing:-0.0185208px;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
        transform="translate(1.4798018,-11.310134)">
       <path
          d="m 13.013925,192.87953 v 0.30029 q -0.134766,-0.0864 -0.270996,-0.13037 -0.134766,-0.0439 -0.272461,-0.0439 -0.209473,0 -0.331055,0.0981 -0.121582,0.0967 -0.121582,0.26221 0,0.14502 0.0791,0.22119 0.08057,0.0762 0.298829,0.12744 l 0.155273,0.0352 q 0.307617,0.0718 0.448242,0.22558 0.140625,0.15381 0.140625,0.41895 0,0.31201 -0.193359,0.47607 -0.19336,0.16407 -0.5625,0.16407 -0.153809,0 -0.309082,-0.0337 -0.155274,-0.0322 -0.312012,-0.0982 v -0.31494 q 0.168457,0.10693 0.317871,0.15674 0.150879,0.0498 0.303223,0.0498 0.224121,0 0.348633,-0.0996 0.124511,-0.10107 0.124511,-0.28125 0,-0.16406 -0.08643,-0.25049 -0.08496,-0.0864 -0.297364,-0.1333 l -0.158203,-0.0366 q -0.304687,-0.0688 -0.442383,-0.208 -0.137695,-0.13916 -0.137695,-0.37354 0,-0.29297 0.196289,-0.46875 0.197754,-0.17725 0.524414,-0.17725 0.125977,0 0.265137,0.0293 0.13916,0.0278 0.292969,0.085 z"
@@ -172,7 +172,7 @@
     <g
        aria-label="B"
        id="text152400"
-       style="font-size:3px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';letter-spacing:-0.0185208px;stroke-width:0.264583;fill:#ffffff"
+       style="font-size:3px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';letter-spacing:-0.0185208px;fill:#ffffff;stroke-width:0.264583"
        transform="translate(-1.2641537,166.11302)">
       <path
          d="m 16.090335,37.799541 v 0.80127 h 0.350098 q 0.257812,0 0.367675,-0.08935 0.109864,-0.09082 0.109864,-0.297364 0,-0.213867 -0.115723,-0.313476 -0.115723,-0.101075 -0.361816,-0.101075 z m 0,-0.899414 v 0.65918 h 0.344238 q 0.213867,0 0.309082,-0.08203 0.09668,-0.08203 0.09668,-0.265137 0,-0.165527 -0.09521,-0.238769 -0.09375,-0.07324 -0.310547,-0.07324 z m -0.297363,-0.243164 h 0.647461 q 0.335449,0 0.517089,0.14502 0.181641,0.145019 0.181641,0.410156 0,0.200684 -0.09668,0.316406 -0.09521,0.115723 -0.287109,0.14502 0.215332,0.03223 0.336914,0.18457 0.123047,0.150879 0.123047,0.385254 0,0.297363 -0.194824,0.449707 -0.194825,0.150879 -0.580078,0.150879 h -0.647461 z"
@@ -228,7 +228,7 @@
        height="13"
        x="20.393999"
        y="183.07999"
-       style="fill:#848483;fill-opacity:1;stroke-width:0.138692"
+       style="fill:#aaaaaa;fill-opacity:1;stroke-width:0.138692"
        ry="1.1936363" />
     <rect
        style="fill:#1d1d1e;fill-opacity:1;stroke:#808080;stroke-width:0;stroke-linecap:round"
@@ -240,7 +240,7 @@
     <g
        aria-label="AB 8"
        id="text76583"
-       style="font-weight:500;font-size:4px;line-height:1.25;font-family:'Gotham Rounded';-inkscape-font-specification:'Gotham Rounded Medium';letter-spacing:-0.0185208px;fill:#e6e6e6;stroke-width:0.264583;fill-opacity:1">
+       style="font-weight:500;font-size:4px;line-height:1.25;font-family:'Gotham Rounded';-inkscape-font-specification:'Gotham Rounded Medium';letter-spacing:-0.0185208px;fill:#e6e6e6;fill-opacity:1;stroke-width:0.264583">
       <path
          d="m 10.597789,176.13198 c 0,0.128 0.1,0.228 0.228,0.228 0.108,0 0.184,-0.052 0.228,-0.156 l 0.236,-0.54 h 1.36 l 0.228,0.524 c 0.044,0.108 0.124,0.172 0.24,0.172 0.132,0 0.232,-0.104 0.232,-0.236 0,-0.036 -0.008,-0.068 -0.028,-0.104 l -1.04,-2.32 c -0.06,-0.124 -0.152,-0.2 -0.292,-0.2 h -0.024 c -0.14,0 -0.236,0.076 -0.296,0.2 l -1.04,2.32 c -0.02,0.044 -0.032,0.08 -0.032,0.112 z m 0.88,-0.904 0.492,-1.132 0.492,1.132 z"
          id="path83778"

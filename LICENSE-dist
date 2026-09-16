@@ -1,9 +1,8 @@
 The CMakeLists.txt and RackSDK.cmake files are based on the VCV Plugin CMake Example
 here: https://github.com/qno/vcv-plugin-cmake-example
 
-It is covered under the folowing License:
+It is covered under the following License:
 -----------------------------------------
-
 MIT License
 
 Copyright (c) 2023 Silvio Kunaschk
@@ -25,4 +24,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+-----------------------------------------
 
