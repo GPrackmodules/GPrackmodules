@@ -105,9 +105,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Delete Development release
-      run: |
-        gh release delete Development --cleanup-tag --yes
-      env:
+        run: |
+         gh release delete Development --cleanup-tag --yes
+        env:
         GH_TOKEN: ${{ github.token }}
       - uses: actions/download-artifact@v8
         with:
