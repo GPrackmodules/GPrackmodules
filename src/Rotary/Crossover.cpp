@@ -12,6 +12,10 @@
 #include "Crossover.h"
 #include <cmath>
 
+#ifndef M_PIf
+# define M_PIf		3.14159265358979323846f	/* pi */
+#endif
+
 Crossover::Crossover(bool b24dBPerOct) :
 	m_b24dBPerOct(b24dBPerOct),
 	m_f4A1(0.0f),
@@ -90,11 +94,11 @@ float Crossover::Treble() const
 	return -m_f4Output.s[TrebleHiPass];
 }
 
-void Crossover::Frequency(int nChannel, float fFrequency)
+void Crossover::Frequency(int nChannel, float fHz)
 {
-	if (fFrequency != m_fFrequency[nChannel])
+	if (fHz != m_fFrequency[nChannel])
 	{
-		m_fFrequency[nChannel] = fFrequency;
+		m_fFrequency[nChannel] = fHz;
 		if (m_fSamplerate > 0.0f)
 			CalcCoeffs(nChannel);
 	}
