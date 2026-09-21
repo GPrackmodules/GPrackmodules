@@ -5,6 +5,9 @@
 #ifndef M_PIf
 # define M_PIf		3.14159265358979323846f	/* pi */
 #endif
+#ifndef M_PI_2f
+# define M_PI_2f	1.57079632679489661923f	/* pi/2 */
+#endif
 
 #define RACK_GRID_WIDTH_MM	(5.08f)
 #define RACK_GRID_HEIGHT_MM	(128.5f)
