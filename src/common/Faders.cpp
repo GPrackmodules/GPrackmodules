@@ -1,6 +1,10 @@
 #include "plugin.h"
 #include "Faders.h"
 
+#ifndef M_PI_2f
+# define M_PI_2f	1.57079632679489661923f	/* pi/2 */
+#endif
+
 //
 // Static stuff for FaderGainQuantity
 //
@@ -128,7 +132,7 @@ void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
 		double dRet = s_FaderCurve[i - 1].ddB + dRel * (s_FaderCurve[i].ddB - s_FaderCurve[i - 1].ddB);
 		// round to .1 dB
 		dRet *= 10.0f;
-		dRet =  (dRet > 0.0) ? floor(dRet + 0.5) : ceil(dRet - 0.5);
+		dRet =  dRet > 0.0 ? floor(dRet + 0.5) : ceil(dRet - 0.5);
 		dRet /= 10;
 		if(dRet > -0.1f && dRet < 0.1f)	// have a precise zero value, also with only 127 MIDI steps
 			dRet = 0.0f;
@@ -197,8 +201,7 @@ PanBalQuantity::PanBalQuantity()
 	int nParam = ParamToIndex(fParam);
 	if (bIsBalance)
 		return s_fBalL[nParam];
-	else
-		return s_fPanL[nParam];
+	return s_fPanL[nParam];
 }
 
 /*static*/ float PanBalQuantity::GainFactorR(float fParam, bool bIsBalance)
@@ -206,8 +209,7 @@ PanBalQuantity::PanBalQuantity()
 	int nParam = ParamToIndex(fParam);
 	if (bIsBalance)
 		return s_fBalR[nParam];
-	else
-		return s_fPanR[nParam];
+	return s_fPanR[nParam];
 }
 
 std::string PanBalQuantity::getDisplayValueString() /*override*/
