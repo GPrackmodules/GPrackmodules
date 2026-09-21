@@ -108,7 +108,7 @@ jobs:
         run: |
           gh release delete Development --cleanup-tag --yes
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
       - uses: actions/download-artifact@v8
         with:
           path: _artifacts
