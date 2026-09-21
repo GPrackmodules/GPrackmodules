@@ -2,6 +2,10 @@
 #include "plugin.h"
 #include "StereoChorus.h"
 
+#ifndef M_PIf
+# define M_PIf		3.14159265358979323846f	/* pi */
+#endif
+
 #define RACK_GRID_WIDTH_MM	(5.08f)
 #define RACK_GRID_HEIGHT_MM	(128.5f)
 
@@ -45,7 +49,7 @@ static constexpr float s_fExternalMod = -0.0001f;
 
 namespace
 {
-struct RateQuantity : public ParamQuantity
+struct RateQuantity : ParamQuantity
 {
 	std::string getDisplayValueString() override
 	{
@@ -176,7 +180,7 @@ void StereoChorusModule::SetDarkMode(bool bDarkMode)
 
 void StereoChorusModule::processBypass(const ProcessArgs& args) /*override*/
 {
-//	process(args); // keep LFOs etc running
+//	process(args); // keep LFOs etc. running
 
 	float fInL, fInR;
 	if (inputs[InputL].isConnected())
@@ -506,7 +510,7 @@ void StereoChorusModule::HandleDepth(bool bForce /*= false*/)
 	if (fValueDepth != m_fValueDepth || bForce)
 	{
 		m_fValueDepth = fValueDepth;
-		m_fDepthDelay = MIN_DELAY + (m_fValueDepth * m_fValueDepth) * (MAX_DELAY - MIN_DELAY) / 10000.0f;
+		m_fDepthDelay = MIN_DELAY + m_fValueDepth * m_fValueDepth * (MAX_DELAY - MIN_DELAY) / 10000.0f;
 		for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
 			m_fadeDelayRanges[v].Start(m_fDepthDelay / m_lfo4.fFrequency[v]);
 		CalcGainFactor();
@@ -524,7 +528,7 @@ void StereoChorusModule::HandleTone(bool bForce /* =true*/)
 	float fValueTone = params[ParamTone].getValue();
 	if (inputs[InputCVTone].isConnected())
 	{
-		fValueTone += ((inputs[InputCVTone].getVoltage(0) - 5.0f) / 5.0f) * params[ParamCVTone].getValue(); // CV = 0..10V, ParamCVRate is +/- 100, need -100..100
+		fValueTone += (inputs[InputCVTone].getVoltage(0) - 5.0f) / 5.0f * params[ParamCVTone].getValue(); // CV = 0..10V, ParamCVRate is +/- 100, need -100..100
 	 	fValueTone = simd::clamp(fValueTone, -100.0f, 100.0f);
 	}
 	if (fValueTone != m_fValueTone || bForce)
@@ -535,19 +539,19 @@ void StereoChorusModule::HandleTone(bool bForce /* =true*/)
 			// darker tones, Lowpass goes from UPPER (at -1%) to LOWER (at -100%)
 			float fRelative = (fValueTone + 100.0f) / 100.0f;
 			LPCutoff(LP_LOWER * pow (LP_UPPER / LP_LOWER, fRelative));
-			HPCutoff(HP_LOWER);;
+			HPCutoff(HP_LOWER);
 		}
 		else if (fValueTone > 0.0f)
 		{
 			// brighter tones, Highpass goes from LOWER (at 1%) to UPPER (at 100%)
 			float fRelative = fValueTone / 100.0f;
 			HPCutoff(HP_LOWER * pow (HP_UPPER / HP_LOWER, fRelative));
-			LPCutoff(LP_UPPER);;
+			LPCutoff(LP_UPPER);
 		}
 		else
 		{
-			HPCutoff(HP_LOWER);;
-			LPCutoff(LP_UPPER);;
+			HPCutoff(HP_LOWER);
+			LPCutoff(LP_UPPER);
 		}
 	}
 }
@@ -557,7 +561,7 @@ void StereoChorusModule::HandleWet(bool bForce /* =true*/)
 	float fValueWet = params[ParamWet].getValue();
 	if (inputs[InputCVWet].isConnected())
 	{
-		fValueWet += ((inputs[InputCVWet].getVoltage(0)/* -5.0f*/) /*/ 5.0f*/) * params[ParamCVWet].getValue() / 10.0f; // CV = 0..10V, ParamCVRate is +/- 100, need 0.100
+		fValueWet += inputs[InputCVWet].getVoltage(0) * params[ParamCVWet].getValue() / 10.0f; // CV = 0..10V, ParamCVRate is +/- 100, need 0.100
 		fValueWet = simd::clamp(fValueWet, 0.0f, 100.0f);
 	}
 	if (fValueWet != m_fValueWet || bForce)
