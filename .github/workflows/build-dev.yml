@@ -104,11 +104,19 @@ jobs:
     needs: [build, build-mac]
     steps:
       - uses: actions/checkout@v6
+      - name: Delete Development release
+      run: |
+        gh release delete Development --cleanup-tag --yes
+      env:
+        GH_TOKEN: ${{ github.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          path: _artifacts
+          token: ${{ secrets.WORKFLOW_PAT }}
       - name: Create Development release
         uses: softprops/action-gh-release@v3
         with:
           name: Development
-          token: ${{ secrets.WORKFLOW_PAT }}
           tag_name: Development
           target_commitish: development
           draft: false
