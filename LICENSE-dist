@@ -1,3 +1,11 @@
+The Github workflow is based on the stoermelder PackOne repository at
+https://github.com/stoermelder/vcvrack-packone which uses the GNU General
+Public Licenne v3.0.
+
+See https://github.com/stoermelder/vcvrack-packone/blob/v2/LICENSE.md
+
+---
+
 The CMakeLists.txt and RackSDK.cmake files are based on the VCV Plugin CMake Example
 here: https://github.com/qno/vcv-plugin-cmake-example
 
