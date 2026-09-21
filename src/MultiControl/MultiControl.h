@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <array>
+
 template <int NUM_INDEV>
 struct MultiControlModule : Module
 {
@@ -134,7 +136,7 @@ struct MultiControlWidget : ModuleWidget
 {
 public:
 	MultiControlWidget(MultiControlModule<NUM_INDEV>* pModule);
-	void appendContextMenu(Menu* menu) override;
+	void appendContextMenu(Menu* pMainMenu) override;
 };
 
 Model* the_pDualControlModel = createModel<MultiControlModule<2>, MultiControlWidget<2>>("DualControl");
