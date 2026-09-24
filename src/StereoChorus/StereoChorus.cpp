@@ -1,6 +1,13 @@
 #include <iomanip>
-#include "plugin.hpp"
+#include "plugin.h"
 #include "StereoChorus.h"
+
+#ifndef M_PIf
+# define M_PIf		3.14159265358979323846f	/* pi */
+#endif
+#ifndef M_PI_2f
+# define M_PI_2f	1.57079632679489661923f	/* pi/2 */
+#endif
 
 #define RACK_GRID_WIDTH_MM	(5.08f)
 #define RACK_GRID_HEIGHT_MM	(128.5f)
@@ -21,12 +28,12 @@
 
 #define	CV_PARAM_Y_MM		(SOCKET_CV_Y_MM - 18.0f)
 
-#define PARAM_COLUMN1_2_MM	9.0f
+#define PARAM_COLUMN1_2_MM	(9.0f)
 #define PARAM_COLUMN2_2_MM	(4.5f * RACK_GRID_WIDTH_MM)
 #define PARAM_COLUMN3_MM	(9.0f * RACK_GRID_WIDTH_MM - PARAM_COLUMN1_2_MM)
 #define	PARAM_ROW2_2_Y_MM	(CV_PARAM_Y_MM - 16.0f)
 
-#define PARAM_COLUMN1_1_MM	12.5f
+#define PARAM_COLUMN1_1_MM	(12.5f)
 #define PARAM_COLUMN2_1_MM	(9.0f * RACK_GRID_WIDTH_MM - PARAM_COLUMN1_1_MM)
 #define	PARAM_ROW1_Y_MM		(19.0f)
 
@@ -36,14 +43,16 @@
 #define LIGHT_LEFT_Y_MM		(35.6f)
 #define LIGHT_RIGHT_Y_MM	(41.6f)
 
-static const float s_fMinus4Pt5dB = pow(10.0, -4.50f / 20.0f);
-static const float s_fExternalMod = -0.0001f;
+static const float s_fMinus4Pt5dB = pow(10.0f, -4.50f / 20.0f);
+static constexpr float s_fExternalMod = -0.0001f;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PARAMETER QUANTITIES
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct RateQuantity : public ParamQuantity
+namespace
+{
+struct RateQuantity : ParamQuantity
 {
 	std::string getDisplayValueString() override
 	{
@@ -59,7 +68,7 @@ struct RateQuantity : public ParamQuantity
 	void setDisplayValueString(std::string s) override
 	{
 		float fHertz;
-		if (sscanf(s.c_str(), "%f", &fHertz) != 1)
+		if (!StrToFloat(s, fHertz))
 			fHertz = 1.0f;
 		setDisplayValue(Value(fHertz));
 	}
@@ -79,6 +88,7 @@ struct RateQuantity : public ParamQuantity
 	}
 };
 
+} // anonymous namespace
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// MODULE
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +181,39 @@ void StereoChorusModule::SetDarkMode(bool bDarkMode)
 	m_bDarkMode = bDarkMode;
 }
 
+void StereoChorusModule::processBypass(const ProcessArgs& args) /*override*/
+{
+//	process(args); // keep LFOs etc. running
+
+	float fInL, fInR;
+	if (inputs[InputL].isConnected())
+	{
+		fInL = inputs[InputL].getVoltageSum();
+		if (inputs[InputR].isConnected())
+			fInR = inputs[InputR].getVoltageSum();
+		else
+		{
+			fInL *= s_fMinus4Pt5dB;
+			fInR = fInL;
+		}
+	}
+	else
+	{
+		if (inputs[InputR].isConnected())
+		{
+			fInR = inputs[InputR].getVoltageSum() * s_fMinus4Pt5dB;
+			fInL = fInR;
+		}
+		else
+		{
+			fInL = 0.0f;
+			fInR = 0.0f;
+		}
+	}
+	outputs[OutputL].setVoltage(fInL);
+	outputs[OutputR].setVoltage(fInR);
+}
+
 void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 {
 	if (!m_bInitialized)
@@ -259,8 +302,6 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	bool bPoly = inputs[InputMod1].getChannels() >= 2 * STEREO_CHORUS_VOICES; // use 8 channels from modulation input 1
 	for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
 	{
-//		AdvanceLFO(lfo);
-
 		// determine delay modulation (+/- 1.0)
 		if (params[ParamRate].getValue() < 0.0f)
 		{
@@ -286,8 +327,8 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 			fModulation[v][1] = m_lfo4.fCosine[v];
 			if (bPoly)
 			{
-				fModulation[v][0] = fModulation[v][0] * 0.5 + simd::clamp(inputs[InputMod1].getVoltage(v) / 20.0f, -0.5f, 0.5f);
-				fModulation[v][1] = fModulation[v][1] * 0.5 + simd::clamp(inputs[InputMod1].getVoltage(v + STEREO_CHORUS_VOICES) / 20.0f, -0.5f, 0.5f);
+				fModulation[v][0] = fModulation[v][0] * 0.5f + simd::clamp(inputs[InputMod1].getVoltage(v) / 20.0f, -0.5f, 0.5f);
+				fModulation[v][1] = fModulation[v][1] * 0.5f + simd::clamp(inputs[InputMod1].getVoltage(v + STEREO_CHORUS_VOICES) / 20.0f, -0.5f, 0.5f);
 			}
 			else
 			{
@@ -295,10 +336,10 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 				{
 					// Additional external modulation input
 					float fCV = simd::clamp(inputs[InputMod1 + v].getVoltage(0) / 20.0f, -0.5f, 0.5f);
-					fModulation[v][0] = fModulation[v][0] * 0.5 + fCV;
+					fModulation[v][0] = fModulation[v][0] * 0.5f + fCV;
 					if (inputs[InputMod1 + v].getChannels() > 1)	// has 2nd channel, use that for right modulation
 						fCV = simd::clamp(inputs[InputMod1 + v].getVoltage(1) / 20.0f, -0.5f, 0.5f);
-					fModulation[v][1] = fModulation[v][1] * 0.5 + fCV;
+					fModulation[v][1] = fModulation[v][1] * 0.5f + fCV;
 				}
 			}
 		}
@@ -331,12 +372,7 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	//
 	// Output signal
 	//
-	if (isBypassed())
-	{
-		outputs[OutputL].setVoltage(inputs[InputL].getVoltageSum());
-		outputs[OutputR].setVoltage(inputs[InputR].getVoltageSum());
-	}
-	else if (args.frame > m_nLastInputFrame + m_pDelayLine->MaxDelaySamples())
+	if (args.frame > m_nLastInputFrame + m_pDelayLine->MaxDelaySamples())
 	{
 		// stop processing once all samples in delay have been played
 		outputs[OutputL].setVoltage(0.0f);
@@ -367,10 +403,10 @@ void StereoChorusModule::process(const ProcessArgs& args) /*override*/
 	// Advance fading coefficients
 	m_fadeGainCorrection.Advance();
 	//m_fGainCorrection = 1.0f / m_fGainDivider;
-	for (int v = 0; v < STEREO_CHORUS_VOICES - 1; v++)
-		m_fadeVoices[v].Advance();
-	for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-		m_fadeDelayRanges[v].Advance();
+	for (auto& fade : m_fadeVoices)
+		fade.Advance();
+	for (auto& fade : m_fadeDelayRanges)
+		fade.Advance();
 	m_fadeLowpass.Advance();
 	m_fadeHighpass.Advance();
 	m_fadeWet.Advance();
@@ -387,15 +423,16 @@ void StereoChorusModule::AdvanceLFO4()
 {
 	m_lfo4.fPhase += m_lfo4.fFrequency * m_fInvertedSamplerate;
 	m_lfo4.fPhase = simd::ifelse(m_lfo4.fPhase >= 1.0f, m_lfo4.fPhase - 1.0f, m_lfo4.fPhase);
-	m_lfo4.fSine = simd::sin(2.0f * M_PI * m_lfo4.fPhase);
-	if (m_bStereo)
+	if (outputs[OutputL].isConnected())
+		m_lfo4.fSine = simd::sin(2.0f * M_PI * m_lfo4.fPhase);
+	if (outputs[OutputR].isConnected())
 		m_lfo4.fCosine = simd::cos(2.0f * M_PI * m_lfo4.fPhase);
 }
 
 void StereoChorusModule::HandleVoices(bool bForce /*= false*/)
 {
 	bool bStereo = outputs[OutputL].isConnected() == outputs[OutputR].isConnected(); // both or none connected
-	int nVoices = (int)params[ParamVoices].getValue();
+	int nVoices = iround(params[ParamVoices].getValue());
 	if (nVoices != m_nVoices || bStereo != m_bStereo || bForce)
 	{
 		if (nVoices > m_nVoices)
@@ -453,9 +490,12 @@ void StereoChorusModule::HandleRate(bool bForce /*= false*/)
 				break;
 			case 4:
 				m_lfo4.fFrequency[0] = m_fAvgFrequency * 0.9134651241f;
-				m_lfo4.fFrequency[1] = m_fAvgFrequency * 0.9712332123;
+				m_lfo4.fFrequency[1] = m_fAvgFrequency * 0.9712332123f;
 				m_lfo4.fFrequency[2] = m_fAvgFrequency * 1.0230897645364f;
 				m_lfo4.fFrequency[3] = m_fAvgFrequency * 1.0865392524524f;
+				break;
+			default:
+				assert(false);
 				break;
 		}
 		HandleDepth(true);
@@ -473,7 +513,7 @@ void StereoChorusModule::HandleDepth(bool bForce /*= false*/)
 	if (fValueDepth != m_fValueDepth || bForce)
 	{
 		m_fValueDepth = fValueDepth;
-		m_fDepthDelay = MIN_DELAY + (m_fValueDepth * m_fValueDepth) * (MAX_DELAY - MIN_DELAY) / 10000.0f;
+		m_fDepthDelay = MIN_DELAY + m_fValueDepth * m_fValueDepth * (MAX_DELAY - MIN_DELAY) / 10000.0f;
 		for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
 			m_fadeDelayRanges[v].Start(m_fDepthDelay / m_lfo4.fFrequency[v]);
 		CalcGainFactor();
@@ -491,7 +531,7 @@ void StereoChorusModule::HandleTone(bool bForce /* =true*/)
 	float fValueTone = params[ParamTone].getValue();
 	if (inputs[InputCVTone].isConnected())
 	{
-		fValueTone += ((inputs[InputCVTone].getVoltage(0) - 5.0f) / 5.0f) * params[ParamCVTone].getValue(); // CV = 0..10V, ParamCVRate is +/- 100, need -100..100
+		fValueTone += (inputs[InputCVTone].getVoltage(0) - 5.0f) / 5.0f * params[ParamCVTone].getValue(); // CV = 0..10V, ParamCVRate is +/- 100, need -100..100
 	 	fValueTone = simd::clamp(fValueTone, -100.0f, 100.0f);
 	}
 	if (fValueTone != m_fValueTone || bForce)
@@ -502,19 +542,19 @@ void StereoChorusModule::HandleTone(bool bForce /* =true*/)
 			// darker tones, Lowpass goes from UPPER (at -1%) to LOWER (at -100%)
 			float fRelative = (fValueTone + 100.0f) / 100.0f;
 			LPCutoff(LP_LOWER * pow (LP_UPPER / LP_LOWER, fRelative));
-			HPCutoff(HP_LOWER);;
+			HPCutoff(HP_LOWER);
 		}
 		else if (fValueTone > 0.0f)
 		{
 			// brighter tones, Highpass goes from LOWER (at 1%) to UPPER (at 100%)
 			float fRelative = fValueTone / 100.0f;
 			HPCutoff(HP_LOWER * pow (HP_UPPER / HP_LOWER, fRelative));
-			LPCutoff(LP_UPPER);;
+			LPCutoff(LP_UPPER);
 		}
 		else
 		{
-			HPCutoff(HP_LOWER);;
-			LPCutoff(LP_UPPER);;
+			HPCutoff(HP_LOWER);
+			LPCutoff(LP_UPPER);
 		}
 	}
 }
@@ -524,34 +564,34 @@ void StereoChorusModule::HandleWet(bool bForce /* =true*/)
 	float fValueWet = params[ParamWet].getValue();
 	if (inputs[InputCVWet].isConnected())
 	{
-		fValueWet += ((inputs[InputCVWet].getVoltage(0)/* -5.0f*/) /*/ 5.0f*/) * params[ParamCVWet].getValue() / 10.0f; // CV = 0..10V, ParamCVRate is +/- 100, need 0.100
+		fValueWet += inputs[InputCVWet].getVoltage(0) * params[ParamCVWet].getValue() / 10.0f; // CV = 0..10V, ParamCVRate is +/- 100, need 0.100
 		fValueWet = simd::clamp(fValueWet, 0.0f, 100.0f);
 	}
 	if (fValueWet != m_fValueWet || bForce)
 	{
 		m_fValueWet = fValueWet;
-		float fFactorDry = simd::cos(fValueWet * M_PI_2 / 100.0f);
-		float fFactorWet = simd::sin(fValueWet * M_PI_2 / 100.0f);
+		float fFactorDry = simd::cos(fValueWet * M_PI_2f / 100.0f);
+		float fFactorWet = simd::sin(fValueWet * M_PI_2f / 100.0f);
 		m_fadeWet.Start(fFactorDry, fFactorWet);
 	}
 }
 
 void StereoChorusModule::CalcGainFactor()
 {
-	float fCorrelated = m_nVoices;
-	float fUncorrelated = sqrt((float)m_nVoices);
+	auto fCorrelated = static_cast<float>(m_nVoices);
+	float fUncorrelated = sqrt(fCorrelated);
 	float fGainCorrection = 1.0f / (fCorrelated + (fUncorrelated - fCorrelated) * m_fValueDepth / 100.0f);  // depth crossfades between the two factors
 	m_fadeGainCorrection.Start(fGainCorrection);
 }
 
 void StereoChorusModule:: LPCutoff(float fHz)
 {
-	m_fadeLowpass.Start(m_fSamplerate / (M_PI * fHz));
+	m_fadeLowpass.Start(m_fSamplerate / (M_PIf * fHz));
 }
 
 void StereoChorusModule::HPCutoff(float fHz)
 {
-	m_fadeHighpass.Start(m_fSamplerate / (M_PI * fHz));
+	m_fadeHighpass.Start(m_fSamplerate / (M_PIf * fHz));
 }
 
 void StereoChorusModule::UpdateSamplerate(float fSamplerate)
@@ -561,10 +601,10 @@ void StereoChorusModule::UpdateSamplerate(float fSamplerate)
 	m_fInvertedSamplerate = 1.0f / fSamplerate;
 
 	m_fadeGainCorrection.SetSamplerate(fSamplerate);
-	for (int v = 0; v < STEREO_CHORUS_VOICES - 1; v++)
-		m_fadeVoices[v].SetSamplerate(fSamplerate);
-	for (int v = 0; v < STEREO_CHORUS_VOICES; v++)
-		m_fadeDelayRanges[v].SetSamplerate(fSamplerate);
+	for (auto& fad : m_fadeVoices)
+		fad.SetSamplerate(fSamplerate);
+	for (auto& fad : m_fadeDelayRanges)
+		fad.SetSamplerate(fSamplerate);
 	m_fadeLowpass.SetSamplerate(fSamplerate);
 	m_fadeHighpass.SetSamplerate(fSamplerate);
 	m_fadeWet.SetSamplerate(fSamplerate);
@@ -598,18 +638,19 @@ StereoChorusWidget::StereoChorusWidget(StereoChorusModule* pModule) :
 
 	for (int i = 0; i < STEREO_CHORUS_VOICES; i++)
 	{
-		m_aLightsMono[i] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + i * LIGHT_STEP_MM, LIGHT_MONO_Y_MM)), pModule, StereoChorusModule::Light1Mono + i);
+		auto fi = static_cast<float>(i);
+		m_aLightsMono[i] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + fi * LIGHT_STEP_MM, LIGHT_MONO_Y_MM)), pModule, StereoChorusModule::Light1Mono + i);
 		addChild(m_aLightsMono[i]);
-		m_aLightsStereo[i][0] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + i * LIGHT_STEP_MM, LIGHT_LEFT_Y_MM)), pModule, StereoChorusModule::Light1Left + i);
+		m_aLightsStereo[i][0] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + fi * LIGHT_STEP_MM, LIGHT_LEFT_Y_MM)), pModule, StereoChorusModule::Light1Left + i);
 		addChild(m_aLightsStereo[i][0]);
-		m_aLightsStereo[i][1] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + i * LIGHT_STEP_MM, LIGHT_RIGHT_Y_MM)), pModule, StereoChorusModule::Light1Right + i);
+		m_aLightsStereo[i][1] = createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(LIGHT_COLUMN1_MM + fi * LIGHT_STEP_MM, LIGHT_RIGHT_Y_MM)), pModule, StereoChorusModule::Light1Right + i);
 		addChild(m_aLightsStereo[i][1]);
 		m_aLightsStereo[i][0]->hide();
 		m_aLightsStereo[i][1]->hide();
 	}
 
 	addParam(createParamCentered<PointyKnob12mm>(mm2px(Vec(PARAM_COLUMN1_2_MM, PARAM_ROW2_2_Y_MM)), pModule, StereoChorusModule::ParamTone));
-	PointyKnob12mm* pVoicesKnob = createParamCentered<PointyKnob12mm>(mm2px(Vec(PARAM_COLUMN2_2_MM, PARAM_ROW2_2_Y_MM)), pModule, StereoChorusModule::ParamVoices);
+	auto pVoicesKnob = createParamCentered<PointyKnob12mm>(mm2px(Vec(PARAM_COLUMN2_2_MM, PARAM_ROW2_2_Y_MM)), pModule, StereoChorusModule::ParamVoices);
 	pVoicesKnob->minAngle = -M_PI_2 / 2.0f;
 	pVoicesKnob->maxAngle = M_PI_2 / 2.0f;
 	addParam(pVoicesKnob);

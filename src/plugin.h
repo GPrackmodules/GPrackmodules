@@ -22,5 +22,13 @@ using namespace std;
 using namespace rack;
 using namespace rack::engine;
 
+// Helpers
+extern int iround(float f);
+extern int iround(double d);
+extern int64_t i64round(float f);
+extern int64_t i64round(double d);
+extern bool StrToFloat(const std::string& s, float& f, const char** ppParsedUntil = nullptr);
+extern bool StrToFloat(const char* psz, float& f, const char** ppParsedUntil = nullptr);
+
 // Declare the Plugin, defined in plugin.cpp
 extern Plugin* the_pPluginInstance;

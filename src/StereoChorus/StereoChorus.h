@@ -69,26 +69,25 @@ public:
 
 public:
 	StereoChorusModule();
-	~StereoChorusModule();
+	~StereoChorusModule() override;
 
 public:
-	void setSampleRate(float fSamplerate);
 	bool Stereo() const { return m_bStereo; }
 	void SetDarkMode(bool bDarkMode);
 
+	void processBypass(const ProcessArgs& args) override;
 	void process(const ProcessArgs& args) override;
 	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void SetWidget(struct StereoChorusWidget* pWidget) { m_pWidget = pWidget; }
 
 private:
-	typedef struct _LFO4
+	struct LFO4
 	{
 		simd::float_4 fPhase = { 0.0f, 0.0f, 0.0f, 0.0f };		// runs from 0..1.0f
 		simd::float_4 fFrequency = { 1.0f, 1.0f, 1.0f, 1.0f };	// 1.0f / freuqency
 		simd::float_4 fSine;
 		simd::float_4 fCosine;									// only valid if m_bStereo
-	}
-	LFO4;
+	};
 
 private:
 	void AdvanceLFO4();
@@ -106,7 +105,7 @@ private:
 	struct StereoChorusWidget* m_pWidget = nullptr;
 	bool m_bInitialized = false;
 	bool m_bHasInput = false;
-	int64_t m_nLastInputFrame;
+	int64_t m_nLastInputFrame = 0;
 
 	int m_nVoices = 1;
 	bool m_bStereo = false;
@@ -115,7 +114,6 @@ private:
 
 	float m_fValueRate = 0.5f;
 	float m_fAvgFrequency = 1.0f;
-	// LFO m_LFOs[STEREO_CHORUS_VOICES];
 	LFO4 m_lfo4;
 
 	float m_fValueDepth = 0.5f;
@@ -123,7 +121,7 @@ private:
 	float m_fDelayRanges[STEREO_CHORUS_VOICES] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	Fade m_fadeDelayRanges[STEREO_CHORUS_VOICES];
 
-	float m_fValueTone;
+	float m_fValueTone = 0.5f;
 	dsp::TRCFilter<simd::float_4> m_fltTone;// channel 0/1 = Lowpass left/right, 2/3 = Highpass Left/right
 	Fade2 m_fadeLowpass;					// smooth cutoff frequency fades
 	Fade2 m_fadeHighpass;					// smooth cutoff frequency fades
@@ -158,7 +156,6 @@ struct StereoChorusWidget : ModuleWidget
 public:
 	StereoChorusWidget(StereoChorusModule* pModule);
 
-protected:
 	void step() override;
 
 private:
@@ -166,8 +163,8 @@ private:
 	bool m_bDarkMode;
 	bool m_bStereo = false;
 
-	MediumLight<BlueLight>* m_aLightsMono[STEREO_CHORUS_VOICES];
-	MediumLight<BlueLight>* m_aLightsStereo[STEREO_CHORUS_VOICES][2];
+	MediumLight<BlueLight>* m_aLightsMono[STEREO_CHORUS_VOICES] = {};
+	MediumLight<BlueLight>* m_aLightsStereo[STEREO_CHORUS_VOICES][2] = {};
 };
 
 extern Model* the_pStereoChorusModel;

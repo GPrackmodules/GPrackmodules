@@ -35,8 +35,8 @@ public:
 private:
 	float& m_rCoefficient;
 	float m_fFadeMs = 20.0f;
-	float m_fInvertedSteps = 1.0f;		// will be computer in SetSamplerate()
 	float m_fTarget = 0.0f;
+	float m_fInvertedSteps = 1.0f;		// will be computer in SetSamplerate()
 	float m_fFadeStep = 0.0f;
 	bool m_bFadingUp = false;
 	bool m_bFadingDown = false;

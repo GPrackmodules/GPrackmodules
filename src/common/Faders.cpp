@@ -1,5 +1,9 @@
-#include "plugin.hpp"
+#include "plugin.h"
 #include "Faders.h"
+
+#ifndef M_PI_2f
+# define M_PI_2f	1.57079632679489661923f	/* pi/2 */
+#endif
 
 //
 // Static stuff for FaderGainQuantity
@@ -13,7 +17,7 @@
 // Static stuff fie GPaudioSlider
 //
 
-static struct _FaderCurve
+static struct
 {
 	double dThresh;				// parameter value 0.0 .. 1.0
 	double ddB;					// dB value at threshold
@@ -51,7 +55,7 @@ static float s_fPanL[MAX_PANBAL - MIN_PANBAL + 1];
 static float s_fPanR[MAX_PANBAL - MIN_PANBAL + 1];
 static float s_fBalL[MAX_PANBAL - MIN_PANBAL + 1];
 static float s_fBalR[MAX_PANBAL - MIN_PANBAL + 1];
-bool s_bPanBalInitialized = false;
+static bool s_bPanBalInitialized = false;
 
 //
 // Static stuff for SendQuantiry
@@ -75,11 +79,11 @@ FaderGainQuantity::FaderGainQuantity()
 	if (!s_bCurveInitialized)
 	{
 		s_bCurveInitialized = true;
-		for (int i = 0; i < N_FADER_CURVE; i++)
-			s_FaderCurve[i].dThresh *= (double)FADER_STEPS;
+		for (auto& fc : s_FaderCurve)
+			fc.dThresh *= FADER_STEPS_F;
 		for (int i = 0; i <= FADER_STEPS; i++)
 		{
-			s_faderValues[i].fdB = FaderParam2dB((float)i);
+			s_faderValues[i].fdB = FaderParam2dB(static_cast<float>(i));
 			s_faderValues[i].fFactor = pow(10.0f, s_faderValues[i].fdB / 20.0f);
 			// printf("Step %d (rel %f), %.1f\n", i, (float)i, fdB);
 		}
@@ -88,13 +92,13 @@ FaderGainQuantity::FaderGainQuantity()
 
 /*static*/ float FaderGainQuantity::GainFactor(float fParam)
 {
-	int nParam = (int)(fParam + 0.5f);
+	int nParam = iround(fParam);
 	return s_faderValues[nParam].fFactor;
 }
 
 std::string FaderGainQuantity::getDisplayValueString()
 {
-	int nParam = (int)(getValue() + 0.5f);
+	int nParam = iround(getValue());
 	float fdB = s_faderValues[nParam].fdB;
 	if (fdB == 0.0f)
 		return "0 dB";
@@ -108,7 +112,7 @@ std::string FaderGainQuantity::getDisplayValueString()
 void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
 {
 	float fdB;
-	if (sscanf(s.c_str(), "%f", &fdB) != 1)
+	if (!StrToFloat(s, fdB))
 		fdB = OFF_DB;
 	setDisplayValue(FaderdB2Param(fdB));
 }
@@ -118,8 +122,8 @@ void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
 	if(fParam <= 0.0f)
 		return OFF_DB;
 	if(fParam >= FADER_STEPS_F)
-		return (float)s_FaderCurve[N_FADER_CURVE - 1].ddB;
-	double dParam = (double)fParam;
+		return static_cast<float>(s_FaderCurve[N_FADER_CURVE - 1].ddB);
+	auto dParam = static_cast<double>(fParam);
 	for(int i = 1; i < N_FADER_CURVE; i++)
 	{
 		if(dParam > s_FaderCurve[i].dThresh)
@@ -128,18 +132,18 @@ void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
 		double dRet = s_FaderCurve[i - 1].ddB + dRel * (s_FaderCurve[i].ddB - s_FaderCurve[i - 1].ddB);
 		// round to .1 dB
 		dRet *= 10.0f;
-		dRet =  (dRet > 0.0) ? floor(dRet + 0.5) : ceil(dRet - 0.5);
+		dRet =  dRet > 0.0 ? floor(dRet + 0.5) : ceil(dRet - 0.5);
 		dRet /= 10;
 		if(dRet > -0.1f && dRet < 0.1f)	// have a precise zero value, also with only 127 MIDI steps
 			dRet = 0.0f;
-		return (float)dRet;
+		return static_cast<float>(dRet);
 	}
-	return (float)s_FaderCurve[N_FADER_CURVE - 1].ddB;
+	return static_cast<float>(s_FaderCurve[N_FADER_CURVE - 1].ddB);
 }
 
 /*static*/ float FaderGainQuantity::FaderdB2Param(float fdB)
 {
-	double ddB = (double)fdB;
+	auto ddB = static_cast<double>(fdB);
 	if(ddB <= s_FaderCurve[0].ddB)
 		return 0.0f;
 	if(ddB >= s_FaderCurve[N_FADER_CURVE -1].ddB)
@@ -150,7 +154,7 @@ void FaderGainQuantity::setDisplayValueString(std::string s) /*override*/
 			continue;
 		double dRel = (ddB - s_FaderCurve[i - 1].ddB) / (s_FaderCurve[i].ddB - s_FaderCurve[i - 1].ddB);
 		double dRet = s_FaderCurve[i - 1].dThresh + dRel * (s_FaderCurve[i].dThresh - s_FaderCurve[i - 1].dThresh);
-		return (float)dRet;
+		return static_cast<float>(dRet);
 	}
 	return FADER_STEPS_F;
 }
@@ -171,7 +175,7 @@ PanBalQuantity::PanBalQuantity()
 		// we go for a -3dB panning law, implemented as sine/cosine curves
 		for (int i = 0; i <= MAX_PANBAL - MIN_PANBAL; i++)
 		{
-			float fAngle = M_PI_2 * (float)i / (float)(MAX_PANBAL - MIN_PANBAL);
+			float fAngle = M_PI_2f * static_cast<float>(i) / (MAX_PANBAL_F - MIN_PANBAL_F);
 			float fSine = sin(fAngle);
 			s_fPanR[i] = fSine;
 			s_fPanL[MAX_PANBAL - MIN_PANBAL - i] = fSine;
@@ -186,7 +190,7 @@ PanBalQuantity::PanBalQuantity()
 		}
 		for (int i = -MIN_PANBAL; i <= MAX_PANBAL - MIN_PANBAL; i++)
 		{
-			s_fBalL[i] = cos((float)(i + MIN_PANBAL) * M_PI_2 / (float)MAX_PANBAL);
+			s_fBalL[i] = cos((static_cast<float>(i) + MIN_PANBAL_F) * M_PI_2f / MAX_PANBAL_F);
 			s_fBalR[MAX_PANBAL - MIN_PANBAL - i] = s_fBalL[i];
 		}
 	}
@@ -197,8 +201,7 @@ PanBalQuantity::PanBalQuantity()
 	int nParam = ParamToIndex(fParam);
 	if (bIsBalance)
 		return s_fBalL[nParam];
-	else
-		return s_fPanL[nParam];
+	return s_fPanL[nParam];
 }
 
 /*static*/ float PanBalQuantity::GainFactorR(float fParam, bool bIsBalance)
@@ -206,18 +209,17 @@ PanBalQuantity::PanBalQuantity()
 	int nParam = ParamToIndex(fParam);
 	if (bIsBalance)
 		return s_fBalR[nParam];
-	else
-		return s_fPanR[nParam];
+	return s_fPanR[nParam];
 }
 
 std::string PanBalQuantity::getDisplayValueString() /*override*/
 {
-	int nParam = (int)getValue();
+	int nParam = iround(getValue());
 
 	char szValue[32];
 	if (nParam < -1)
 		snprintf(szValue, sizeof(szValue), "Left %d %%", -nParam);
-	else if (getValue() > 1)
+	else if (nParam > 1)
 		snprintf(szValue, sizeof(szValue), "Right %d %%", nParam);
 	else
 		return "Center";
@@ -226,7 +228,7 @@ std::string PanBalQuantity::getDisplayValueString() /*override*/
 
 /*static*/ int PanBalQuantity::ParamToIndex(float fParam)
 {
-	int nParam = (int)fParam;
+	int nParam = iround(fParam);
 	if (nParam >= -1 && nParam <= 1)	// catch middle position with 127 MIDI steps
 		nParam = 0;
 	return nParam - MIN_PANBAL;
@@ -243,7 +245,7 @@ SendQuantity::SendQuantity()
 		s_bSendInitialized = true;
 		for (int i = 1; i <= SEND_STEPS; i++) // avoid Value 0 = -infinity dB
 		{
-			float fFactor = (float)i / (float)(SEND_STEPS);
+			float fFactor = static_cast<float>(i) / SEND_STEPS_F;
 			s_Send[i].fFactor = fFactor * fFactor;
 			s_Send[i].fdB = 20.0f * log10(s_Send[i].fFactor);
 		}
@@ -252,13 +254,13 @@ SendQuantity::SendQuantity()
 
 /*static*/ float SendQuantity::GainFactor(float fParam)
 {
-	int nParam = (int)(fParam + 0.5f);
+	int nParam = iround(fParam);
 	return s_Send[nParam].fFactor;
 }
 
 std::string SendQuantity::getDisplayValueString() /*override*/
 {
-	int nParam = (int)(getValue() + 0.5f);
+	int nParam = iround(getValue());
 	if (nParam == 0)
 		return "Off";
 	char szValue[32];
@@ -270,9 +272,7 @@ void SendQuantity::setDisplayValueString(std::string s) /*override*/
 {
 	float fdB;
 	float fParam;
-	if (s == "Off")
-		fParam = 0.0f;
-	else if (sscanf(s.c_str(), "%f", &fdB) != 1)
+	if (s == "Off" || !StrToFloat(s, fdB))
 		fParam = 0.0f;
 	else if (fdB >= 0.0f)
 		fParam = 1.0f;
@@ -319,7 +319,7 @@ GPaudioFader::GPaudioFader(FaderLength eFaderLength) :
 
 /*static*/ float GPaudioFader::GainFactor(float fParam)
 {
-	return s_faderValues[(int)(fParam + 0.5)].fFactor;
+	return s_faderValues[iround(fParam)].fFactor;
 }
 
 void GPaudioFader::UpdateDarkMode()

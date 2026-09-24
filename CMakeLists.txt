@@ -9,7 +9,7 @@
 # symbols, nothing 'optimized away') and Release (full optimization) builds.
 #
 # This CMakeLists.txt file has been tested with CLion under Windows and Linux. Mac support is included
-# as originally ptrovided at the link below, but I have no way of testing it.
+# as originally provided at the link below, but I have no way of testing it.
 #
 # Unlike with the Makefile no .vcvplugin archive gets created. Use the Makefile and 'make dist' or
 # 'make install' to create official pluyin archives.
@@ -20,7 +20,6 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-# set(CMAKE_CXX_STANDARD 20)
 # default to release build if no build type given
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
@@ -46,6 +45,8 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/src/ChainMixer
 	${CMAKE_SOURCE_DIR}/src/StereoChorus
 	${CMAKE_SOURCE_DIR}/src/Rotary
+	${CMAKE_SOURCE_DIR}/src/Clamp
+	${CMAKE_SOURCE_DIR}/src/MultiControl
 )
 
 target_sources(${RACK_PLUGIN_LIB} PRIVATE
@@ -53,13 +54,18 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/common/Knobs.cpp
 	src/common/Fade.cpp
 	src/common/Fade2.cpp
+	src/common/MultiParamChange.cpp
 	src/AB/ABDisplay.cpp
 	src/AB/AB4.cpp
 	src/AB/AB8.cpp
 	src/plugin.cpp
+	src/ChainMixer/MuteSoloButton.cpp
+	src/ChainMixer/MenuSlider.cpp
 	src/ChainMixer/ChainMixerModule.cpp
+	src/ChainMixer/ChainMixerChannelBase.cpp
 	src/ChainMixer/ChainMixerChannel.cpp
-	src/ChainMixer/ChainMixerMaster.cpp
+	src/ChainMixer/ChainMixerExtChannel.cpp
+	src/ChainMixer/ChainMixerMain.cpp
 	src/ChainMixer/ChainMixerAux.cpp
 	src/StereoChorus/StereoChorus.cpp
 	src/StereoChorus/ChorusDelayLine.cpp
@@ -67,4 +73,5 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/Rotary/MilliSampleDelayLine.cpp
 	src/Rotary/Crossover.cpp
 	src/Rotary/Rotor4.cpp
+	src/Clamp/Clamp.cpp
 )

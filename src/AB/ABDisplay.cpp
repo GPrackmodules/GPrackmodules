@@ -1,10 +1,5 @@
-#include "plugin.hpp"
+#include "plugin.h"
 #include "AB/ABDisplay.h"
-
-ABDisplay::ABDisplay()
-{
-
-}
 
 void ABDisplay::drawLayer(const rack::widget::Widget::DrawArgs& args, int nLayer) /*override*/
 {

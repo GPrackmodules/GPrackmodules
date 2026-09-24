@@ -1,13 +1,11 @@
-#include "plugin.hpp"
+#include "plugin.h"
 #include "Faders.h"
+#include "MuteSoloButton.h"
 
 #include "ChainMixerAux.h"
 
 #define SEND_L_Y_MM		SOCKET_L_Y_MM
 #define SEND_R_Y_MM		SOCKET_R_Y_MM
-
-#define CENTER_LEFT_MM	CENTER_2U_MM
-#define CENTER_RIGHT_MM	(CENTER_2U_MM + 2 * RACK_GRID_WIDTH_MM)
 
 #define RETURN_R_Y_MM	(SEND_L_Y_MM - 15.0f)
 #define RETURN_L_Y_MM	(RETURN_R_Y_MM - SOCKET_STEP_MM)
@@ -34,9 +32,10 @@ ChainMixerAuxModule::ChainMixerAuxModule() :
 	paramQuantities[ParamGain2]->snapEnabled = true;
 #endif
 	configParam(ParamSolo1, 0.f, 1.f, 0.f, "Solo AUX 1");
-	configParam(ParamSolo1, 0.f, 1.f, 0.f, "Solo AUX 2");
+	configParam(ParamSolo2, 0.f, 1.f, 0.f, "Solo AUX 2");
 	configParam(ParamMute1, 0.f, 1.f, 0.f, "Mute AUX 1");
-	configParam(ParamMute1, 0.f, 1.f, 0.f, "Mute AUX 2");
+	configParam(ParamMute2, 0.f, 1.f, 0.f, "Mute AUX 2");
+	configParam(ParamMuteSendsOnMainMute, 0.f, 1.f, 0.f, "Mute Aux sends on Main Mute");
 	configInput(Return1L, "AUX Return 1 Left");
 	configInput(Return1R, "AUX Return 1 Right");
 	configInput(Return2L, "AUX Return 2 Left");
@@ -79,8 +78,10 @@ void ChainMixerAuxModule::process(const ProcessArgs& args) /*override*/
 		lights[LightMute1].setBrightness(m_AuxInfo[0].bMute ? MUTE_BRIGHTNESS : DIM_BRIGHTNESS);
 		HandleBoolParam(m_AuxInfo[1].bMute, ParamMute2, true);
 		lights[LightMute2].setBrightness(m_AuxInfo[1].bMute ? MUTE_BRIGHTNESS : DIM_BRIGHTNESS);
+		m_bMuteSendsOnMainMute = params[ParamMuteSendsOnMainMute].getValue() > 0.5f;
 	}
 
+	HandleMuteSoloQueue();
 	if (HandleBoolParam(m_AuxInfo[0].bSolo, ParamSolo1))
 		lights[LightSolo1].setBrightness(m_AuxInfo[0].bSolo ? SOLO_BRIGHTNESS : DIM_BRIGHTNESS);
 	if (HandleBoolParam(m_AuxInfo[1].bSolo, ParamSolo2))
@@ -89,6 +90,12 @@ void ChainMixerAuxModule::process(const ProcessArgs& args) /*override*/
 		lights[LightMute1].setBrightness(m_AuxInfo[0].bMute ? MUTE_BRIGHTNESS : DIM_BRIGHTNESS);
 	if (HandleBoolParam(m_AuxInfo[1].bMute, ParamMute2))
 		lights[LightMute2].setBrightness(m_AuxInfo[1].bMute ? MUTE_BRIGHTNESS : DIM_BRIGHTNESS);
+}
+
+void ChainMixerAuxModule::MuteSendsOnMainMute(bool bMuteSendsOnMainMute)
+{
+	m_bMuteSendsOnMainMute = bMuteSendsOnMainMute;
+	paramQuantities[ParamMuteSendsOnMainMute]->setValue(bMuteSendsOnMainMute ? 1.0f : 0.0f);
 }
 
 void ChainMixerAuxModule::GetAuxInfo(struct AuxInfo rInfo[2])
@@ -100,11 +107,13 @@ void ChainMixerAuxModule::GetAuxInfo(struct AuxInfo rInfo[2])
 	memcpy(rInfo, m_AuxInfo, sizeof(m_AuxInfo));
 }
 
-void ChainMixerAuxModule::ProcessAudioBusses(
+void ChainMixerAuxModule::ProcessAudioBuses(
 	const ProcessArgs& args,
 	float* pMainL, float* pMainR,
 	float* pAux1L, float* pAux1R,
 	float* pAux2L, float* pAux2R,
+	float fMainFactor,
+	bool bMainMute,
 	bool bAnyChannelSolo,
 	struct AuxInfo rInfo[2]) /*override*/
 {
@@ -118,11 +127,29 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 	//
 	// Sends
 	//
+	float fSend1L;
+	float fSend1R;
+	float fSend2L;
+	float fSend2R;
+	if (m_bMuteSendsOnMainMute && bMainMute)
+	{
+		fSend1L = 0.0f;
+		fSend1R = 0.0f;
+		fSend2L = 0.0f;
+		fSend2R = 0.0f;
+	}
+	else
+	{
+		fSend1L = pAux1L != nullptr ? *pAux1L : 0.0f;
+		fSend1R = pAux1R != nullptr ? *pAux1R : 0.0f;
+		fSend2L = pAux2L != nullptr ? *pAux2L : 0.0f;
+		fSend2R = pAux2R != nullptr ? *pAux2R : 0.0f;
+	}
 	if (outputs[Send1L].isConnected() && pAux1L != nullptr)
 	{
-		outputs[Send1L].setVoltage(*pAux1L);
+		outputs[Send1L].setVoltage(fSend1L);
 		if (outputs[Send1R].isConnected() && pAux1R != nullptr)
-			outputs[Send1R].setVoltage(*pAux1R);
+			outputs[Send1R].setVoltage(fSend1R);
 		else
 			outputs[Send1R].setVoltage(0.0f);
 	}
@@ -130,16 +157,16 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 	{
 		outputs[Send1L].setVoltage(0.0f);
 		if (outputs[Send1R].isConnected() && pAux1L != nullptr)
-			outputs[Send1R].setVoltage(*pAux1L);	// yes, L
+			outputs[Send1R].setVoltage(fSend1L);	// yes, L
 		else
 			outputs[Send1R].setVoltage(0.0f);
 	}
 
 	if (outputs[Send2L].isConnected() && pAux2L != nullptr)
 	{
-		outputs[Send2L].setVoltage(*pAux2L);
+		outputs[Send2L].setVoltage(fSend2L);
 		if (outputs[Send2R].isConnected() && pAux2R != nullptr)
-			outputs[Send2R].setVoltage(*pAux2R);
+			outputs[Send2R].setVoltage(fSend2R);
 		else
 			outputs[Send2R].setVoltage(0.0f);
 	}
@@ -147,7 +174,7 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 	{
 		outputs[Send2L].setVoltage(0.0f);
 		if (outputs[Send2R].isConnected() && pAux2L != nullptr)
-			outputs[Send2R].setVoltage(*pAux2L);	// yes, L
+			outputs[Send2R].setVoltage(fSend2L);	// yes, L
 		else
 			outputs[Send2R].setVoltage(0.0f);
 	}
@@ -157,35 +184,56 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 	//
 
 	// Return 1
-	
-	if (m_AuxInfo[0].bMute ||
-		(m_AuxInfo[1].bSolo && !m_AuxInfo[0].bSolo) ||
-		(!inputs[Return1L].isConnected() && !inputs[Return1R].isConnected()) ||
-		pMainL == nullptr)
+
+	if (pMainL == nullptr)
 	{
 		m_fadeReturn1.Start(0.0f);
+		m_fadeReturn2.Start(0.0f);
 	}
 	else
 	{
-		float fParam = params[ParamGain1].getValue();
-		float fFactor = GPaudioFader::GainFactor(fParam);
-		m_fadeReturn1.Start(fFactor);
-		if (inputs[Return1L].isConnected())
+		if (m_AuxInfo[0].bMute ||
+			(m_AuxInfo[1].bSolo && !m_AuxInfo[0].bSolo))
 		{
-			if (inputs[Return1R].isConnected())
-			{ // return is stereo
-				if (pMainR != nullptr)
-				{
-					*pMainL += inputs[Return1L].getVoltageSum() * m_fFactorReturn1;
-					*pMainR += inputs[Return1R].getVoltageSum() * m_fFactorReturn1;
+			m_fadeReturn1.Start(0.0f);
+		}
+		else
+		{
+			float fParam = params[ParamGain1].getValue();
+			m_fadeReturn1.Start(GPaudioFader::GainFactor(fParam));
+		}
+		if (m_fFactorReturn1 > 0.0f)
+		{
+			if (inputs[Return1L].isConnected())
+			{
+				if (inputs[Return1R].isConnected())
+				{ // return is stereo
+					if (pMainR != nullptr)
+					{
+						*pMainL += inputs[Return1L].getVoltageSum() * m_fFactorReturn1;
+						*pMainR += inputs[Return1R].getVoltageSum() * m_fFactorReturn1;
+					}
+					else
+						*pMainL += (inputs[Return1L].getVoltageSum() + inputs[Return1R].getVoltageSum()) * m_fFactorReturn1 * g_fMinus3dB;
 				}
 				else
-					*pMainL += (inputs[Return1L].getVoltageSum() + inputs[Return1R].getVoltageSum()) * m_fFactorReturn1 * g_fMinus3dB;
-			}
+				{ // return is left only
+					float fReturn = inputs[Return1L].getVoltageSum();
+					// *pMainL +=  fReturn * m_fFactorReturn1;
+					if (pMainR != nullptr)
+					{
+						fReturn *= g_fMinus3dB;
+						*pMainL += fReturn * m_fFactorReturn1;
+						*pMainR += fReturn * m_fFactorReturn1;
+					}
+					else
+						*pMainL += fReturn * m_fFactorReturn1;
+
+				}
+			} // if (inputs[Return1L].isConnected())
 			else
-			{ // return is left only
-				float fReturn = inputs[Return1L].getVoltageSum(); 
-				*pMainL +=  fReturn * m_fFactorReturn1;
+			{ // return is right only
+				float fReturn = inputs[Return1R].getVoltageSum();
 				if (pMainR != nullptr)
 				{
 					fReturn *= g_fMinus3dB;
@@ -194,52 +242,53 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 				}
 				else
 					*pMainL += fReturn * m_fFactorReturn1;
-
 			}
-		} // if (inputs[Return1L].isConnected())
-		else
-		{ // return is right only
-			float fReturn = inputs[Return1R].getVoltageSum(); 
-			if (pMainR != nullptr)
-			{
-				fReturn *= g_fMinus3dB;
-				*pMainL += fReturn * m_fFactorReturn1;
-				*pMainR += fReturn * m_fFactorReturn1;
-			}
-			else
-				*pMainL += fReturn * m_fFactorReturn1;
-		}
-	} // if (m_AuxInfo[0].bMute || ....) else
+		} // if (m_fFactorReturn1 > 0.0f)
 
-	// Return 2
+		// Return 2
 
-	if (m_AuxInfo[1].bMute ||
-		(m_AuxInfo[0].bSolo && !m_AuxInfo[1].bSolo) ||
-		(!inputs[Return2L].isConnected() && !inputs[Return2R].isConnected()) ||
-		pMainL == nullptr)
-	{
-		m_fadeReturn2.Start(0.0f);
-	}
-	else
-	{
-		float fParam = params[ParamGain2].getValue();
-		float fFactor = GPaudioFader::GainFactor(fParam);
-		m_fadeReturn2.Start(fFactor);
-		if (inputs[Return2L].isConnected())
+		if (m_AuxInfo[1].bMute ||
+			(m_AuxInfo[0].bSolo && !m_AuxInfo[1].bSolo))
 		{
-			if (inputs[Return2R].isConnected())
-			{ // return is stereo
-				if (pMainR != nullptr)
-				{
-					*pMainL += inputs[Return2L].getVoltageSum() * m_fFactorReturn2;
-					*pMainR += inputs[Return2R].getVoltageSum() * m_fFactorReturn2;
+			m_fadeReturn2.Start(0.0f);
+		}
+		else
+		{
+			float fParam = params[ParamGain2].getValue();
+			// float fFactor = GPaudioFader::GainFactor(fParam);
+			m_fadeReturn2.Start(GPaudioFader::GainFactor(fParam));
+		}
+		if (m_fFactorReturn2 > 0.0f)
+		{
+			if (inputs[Return2L].isConnected())
+			{
+				if (inputs[Return2R].isConnected())
+				{ // return is stereo
+					if (pMainR != nullptr)
+					{
+						*pMainL += inputs[Return2L].getVoltageSum() * m_fFactorReturn2;
+						*pMainR += inputs[Return2R].getVoltageSum() * m_fFactorReturn2;
+					}
+					else
+						*pMainL += (inputs[Return2L].getVoltageSum() + inputs[Return2R].getVoltageSum()) * m_fFactorReturn2 * g_fMinus3dB;
 				}
 				else
-					*pMainL += (inputs[Return2L].getVoltageSum() + inputs[Return2R].getVoltageSum()) * m_fFactorReturn2 * g_fMinus3dB;
-			}
+				{ // return is left only
+					float fReturn = inputs[Return2L].getVoltageSum();
+					if (pMainR != nullptr)
+					{
+						fReturn *= g_fMinus3dB;
+						*pMainL += fReturn * m_fFactorReturn2;
+						*pMainR += fReturn * m_fFactorReturn2;
+					}
+					else
+						*pMainL += fReturn * m_fFactorReturn2;
+				}
+			} // if (inputs[Return2L].isConnected())
 			else
-			{ // return is left only
-				float fReturn = inputs[Return2L].getVoltageSum();
+			{
+				float fReturn = inputs[Return2R].getVoltageSum();
+				*pMainL +=  fReturn * m_fFactorReturn2;
 				if (pMainR != nullptr)
 				{
 					fReturn *= g_fMinus3dB;
@@ -247,25 +296,87 @@ void ChainMixerAuxModule::ProcessAudioBusses(
 					*pMainR += fReturn * m_fFactorReturn2;
 				}
 				else
-					*pMainL += fReturn * m_fFactorReturn2;
+					*pMainL +=  fReturn * m_fFactorReturn2;
 			}
-		} // if (inputs[Return2L].isConnected())
-		else
-		{ // return is left only
-			float fReturn = inputs[Return2R].getVoltageSum();
-			*pMainL +=  fReturn * m_fFactorReturn2;
-			if (pMainR != nullptr)
-			{
-				fReturn *= g_fMinus3dB;
-				*pMainL += fReturn * m_fFactorReturn2;
-				*pMainR += fReturn * m_fFactorReturn2;
-			}
-			else
-				*pMainL +=  fReturn * m_fFactorReturn2;
-		}
-	}  // if (m_AuxInfo[1].bMute || ....) else
+		} // if (m_fFactorReturn1 > 0.0f)
+	} // fMainL != nullptr
 	m_fadeReturn1.Advance();
 	m_fadeReturn2.Advance();
+}
+
+void ChainMixerAuxModule::HandleMuteSoloQueue()
+{
+	MuteSoloEvent ev;
+	lock_guard<mutex> lg(MuteSoloMutex());
+	while (MuteSoloEventFromQueue(ev))
+	{
+		if (!ev.bPressed)
+			continue;
+
+		bool bIsMute;
+		int nIndex;
+		int nOtherParamId;
+
+		switch (ev.nParamId)
+		{
+			case ParamSolo1: bIsMute = false; nIndex = 0; nOtherParamId = ParamSolo2; break;
+			case ParamSolo2: bIsMute = false; nIndex = 1; nOtherParamId = ParamSolo1; break;
+			case ParamMute1: bIsMute = true; nIndex = 0; nOtherParamId = ParamMute2; break;
+			case ParamMute2: bIsMute = true; nIndex = 1; nOtherParamId = ParamMute1; break;
+			default: continue;
+		}
+		int nOtherIndex = nIndex ^ 1;
+		const bool bCurrentValue = params[ev.nParamId].getValue() > 0.5f;
+		float fNewValue = bCurrentValue ? 0.0f : 1.0f;
+
+		auto pChanges = new MultiParamChange();
+		history::ParamChange chg;
+		chg.moduleId = id;
+		chg.paramId = ev.nParamId;
+		chg.oldValue = params[ev.nParamId].getValue();
+		chg.newValue = fNewValue;
+		pChanges->vChanges.emplace_back(chg);
+		params[ev.nParamId].setValue(fNewValue);
+		if (ev.bCtrlKeyDown)
+		{
+			chg.paramId = nOtherParamId;
+			chg.oldValue = params[nOtherParamId].getValue();
+			if (bIsMute)
+				chg.newValue = 0.0f;
+			else
+			{
+				// Solo
+				m_bOldSoloValid[nIndex] = false;
+				if (ev.bShiftKeyDown)
+				{
+					chg.newValue = 0.0f;
+					m_bOldSoloValid[nOtherIndex] = false;
+				}
+				else
+				{
+					if (bCurrentValue)
+					{
+						if (m_bOldSoloValid[nOtherIndex])
+						{
+							chg.newValue = m_bOldSolo[nOtherIndex] ? 1.0f : 0.0f;
+							m_bOldSoloValid[nOtherIndex] = false;
+						}
+						else
+							continue; // do not affect ofther cahnnel
+					}
+					else
+					{
+						m_bOldSolo[nOtherIndex] = m_AuxInfo[nOtherIndex].bSolo;
+						m_bOldSoloValid[nOtherIndex] = true;
+						chg.newValue = 0.0f;
+					}
+				}
+			}
+			pChanges->vChanges.emplace_back(chg);
+			params[nOtherParamId].setValue(chg.newValue);
+		}
+		APP->history->push(pChanges);
+	} // while (MuteSoloEventFromQueue(ev))
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,14 +401,14 @@ ChainMixerAuxWidget::ChainMixerAuxWidget(ChainMixerAuxModule* pModule)
 	m_pFader2 = createParamCentered<GPaudioSlider38mm>(mm2px(Vec(CENTER_RIGHT_MM, AUXSLIDER_Y_MM)), pModule, ChainMixerAuxModule::ParamGain2);
 	addParam(m_pFader2);
 
-	addParam(createParamCentered<VCVLatch>(mm2px(Vec(CENTER_LEFT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::ParamSolo1));
+	addParam(createParamCentered<MuteSoloButton>(mm2px(Vec(CENTER_LEFT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::ParamSolo1));
 	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(CENTER_LEFT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::LightSolo1));
-	addParam(createParamCentered<VCVLatch>(mm2px(Vec(CENTER_LEFT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::ParamMute1));
+	addParam(createParamCentered<MuteSoloButton>(mm2px(Vec(CENTER_LEFT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::ParamMute1));
 	addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(CENTER_LEFT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::LightMute1));
 
-	addParam(createParamCentered<VCVLatch>(mm2px(Vec(CENTER_RIGHT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::ParamSolo2));
+	addParam(createParamCentered<MuteSoloButton>(mm2px(Vec(CENTER_RIGHT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::ParamSolo2));
 	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(CENTER_RIGHT_MM, AUXSOLO_Y_MM)), pModule, ChainMixerAuxModule::LightSolo2));
-	addParam(createParamCentered<VCVLatch>(mm2px(Vec(CENTER_RIGHT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::ParamMute2));
+	addParam(createParamCentered<MuteSoloButton>(mm2px(Vec(CENTER_RIGHT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::ParamMute2));
 	addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(CENTER_RIGHT_MM, AUXMUTE_Y_MM)), pModule, ChainMixerAuxModule::LightMute2));
 
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(CENTER_LEFT_MM, RETURN_L_Y_MM)), pModule, ChainMixerAuxModule::Return1L));
@@ -309,6 +420,20 @@ ChainMixerAuxWidget::ChainMixerAuxWidget(ChainMixerAuxModule* pModule)
 	addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(CENTER_RIGHT_MM, RETURN_R_Y_MM)), pModule, ChainMixerAuxModule::Return2R));
 	addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(CENTER_RIGHT_MM, SEND_L_Y_MM)), pModule, ChainMixerAuxModule::Send2L));
 	addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(CENTER_RIGHT_MM, SEND_R_Y_MM)), pModule, ChainMixerAuxModule::Send2R));
+}
+
+void ChainMixerAuxWidget::appendContextMenu(Menu* pMainMenu) /*override*/
+{
+	auto pModule = dynamic_cast<ChainMixerAuxModule*>(getModule());
+	if (pModule == nullptr)
+		return;
+	pMainMenu->addChild(new MenuSeparator);
+	ui::MenuItem* pNumberItem = createCheckMenuItem(
+		"Mute Aux Sends on Main Mute",
+		"",
+		[=]() { return pModule->MuteSendsOnMainMute(); },
+		[=]() { pModule->MuteSendsOnMainMute(!pModule->MuteSendsOnMainMute()); } );
+	pMainMenu->addChild(pNumberItem);
 }
 
 void ChainMixerAuxWidget::step() /*override*/

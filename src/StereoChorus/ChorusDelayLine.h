@@ -1,6 +1,6 @@
 #pragma once
 
-#include "plugin.hpp"
+#include "plugin.h"
 
 #define N_TAPS					31
 #define N_SUBSAMPLE				1000
@@ -16,8 +16,8 @@ public:
 public:
 	static int MaxTaps() { return 1023; }
 
-	void Feed(float fL, float fR);
-	float Read(int nChannel, float fDelayS);
+	void Feed(float fL, float fR) const;
+	float Read(int nChannel, float fDelayS) const;
 	void Advance();
 	void UpdateSamplerate(float fSamplerate);
 

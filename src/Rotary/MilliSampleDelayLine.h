@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "plugin.hpp"
+#include "plugin.h"
 
 #define N_TAPS					31
 #define N_SUBSAMPLE				1000
@@ -24,8 +24,8 @@ public:
 	~MilliSampleDelayLine();
 
 public:
-	void Feed(float fInput);
-	float Read(float fDelayS);
+	void Feed(float fInput) const;
+	float Read(float fDelayS) const;
 	void Advance();
 	void UpdateSamplerate(float fSamplerate);
 

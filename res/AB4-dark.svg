@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="67.678571"
-     inkscape:cy="120.53571"
+     inkscape:cx="65.357143"
+     inkscape:cy="320.53571"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -62,7 +62,7 @@
      id="layer1"
      transform="translate(0,-168.49998)">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:#2c2c24;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.531333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:#28282c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.531333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect420"
        width="20.362751"
        height="128.77928"
@@ -96,7 +96,7 @@
        height="48.529331"
        x="10.395545"
        y="238.22298"
-       style="fill:#848483;fill-opacity:1;stroke-width:0.268;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#aaaaaa;fill-opacity:1;stroke-width:0.268;stroke-miterlimit:4;stroke-dasharray:none"
        ry="1.0096848" />
     <g
        aria-label="SW"
@@ -177,7 +177,7 @@
        height="11"
        x="10.3245"
        y="223.05199"
-       style="fill:#848483;fill-opacity:1;stroke-width:0.127595;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#aaaaaa;fill-opacity:1;stroke-width:0.127595;stroke-miterlimit:4;stroke-dasharray:none"
        ry="1.2344444" />
   </g>
   <g

@@ -5,7 +5,7 @@
 /// Main classes for the Rotary effect
 ///
 
-#include "plugin.hpp"
+#include "plugin.h"
 #include "Rotary.h"
 #include "common/Knobs.h"
 
@@ -76,8 +76,8 @@
 #define MIN_DISTGAINFACTOR			((1.0f - GAINFACTOR_FAR) / (1.0f - GAINFACTOR_NEAR))
 // factors for gain modulation in the bands, these apply to a 0..2.0 rotor value
 #define TREBLE_GAINDEPTH			((1.0f - GAINFACTOR_NEAR) / 2.0f)	// rotor value runs from 0 to 2
-#define MID_GAINDEPTH				(TREBLE_GAINDEPTH / 2.0f)	// speaker is less directional that horn
-#define BASS_GAINDEPTH				(TREBLE_GAINDEPTH / 4.0f)	// speaker is less directional that horn
+#define MID_GAINDEPTH				(TREBLE_GAINDEPTH / 2.0f)	// speaker is less directional than horn
+#define BASS_GAINDEPTH				(TREBLE_GAINDEPTH / 4.0f)	// speaker is less directional than horn
 
 static float s_fMinus4Pt5dB = powf(10.0f, -4.5f / 20.0f);
 
@@ -161,7 +161,7 @@ void RotaryModule::processBypass(const ProcessArgs& args) /*override*/
 		m_bBypassed = true;
 	}
 
-	float fIn = inputs[Input_Mono].getVoltageSum();
+	float fIn = inputs[Input_Mono].getVoltageSum() * s_fMinus4Pt5dB;
 	outputs[OutputL].setVoltage(fIn);
 	outputs[OutputR].setVoltage(fIn);
 }
@@ -231,7 +231,7 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 	float fRotorR = 0.0f;
 	if (m_bStereo)
 	{
-		float fRotorR = 1.0f + m_Rotor4.OutputR(BandHi1);
+		fRotorR = 1.0f + m_Rotor4.OutputR(BandHi1);
 		fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorR;
 		lights[Light_Hi1R].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
 		fOutR = m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
@@ -263,7 +263,7 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 		fRotorR = 1.0f + m_Rotor4.OutputL(BandLo);
 		fGainFactor = 1.0f - m_fBassGainDepth * fRotorR;
 		lights[Light_LoR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-		fOutR += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
+		fOutR += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 	}
 
 	if (m_bEnableMid)
@@ -277,7 +277,7 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 			fRotorR = 1.0f + m_Rotor4.OutputL(BandMid);
 			fGainFactor = 1.0f - m_fMidGainDepth * fRotorR;
 			lights[Light_MidR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
-			fOutR += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
+			fOutR += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 		}
 	}
 	if (m_bStereo)
@@ -642,10 +642,6 @@ RotaryWidget::RotaryWidget(RotaryModule* pModule) :
 	addChild(m_pLightFBFast);
 }
 
-RotaryWidget::~RotaryWidget()
-{
-}
-
 void RotaryWidget::ShowFBLights(bool bShow)
 {
 	if (bShow == m_bFBLightsVisible)
@@ -677,27 +673,27 @@ void RotaryWidget::step()
 
 void RotaryWidget::CreateBandControls(int nStartY, int nParamStart, int nFirstLight, int nLights)
 {
-	int nY1 = nStartY;
-	int nY2 = nY1 + BAND_ROW2_Y;
+	auto fY1 = static_cast<float>(nStartY);
+	float fY2 = fY1 + BAND_ROW2_Y;
 	int nParam = nParamStart;
 	int nLight = nFirstLight;
 	if (nLights & 1) // odd number of lights -> extra light in parameter button
 	{
-		addParam(createParamCentered<VCVLatch>(mm2px(Vec(PARAM_BAND_SWITCH_X, nY1)), m_pModule, nParam++));
-		addChild(createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(PARAM_BAND_SWITCH_X, nY1)), m_pModule, nLight++));
+		addParam(createParamCentered<VCVLatch>(mm2px(Vec(PARAM_BAND_SWITCH_X, fY1)), m_pModule, nParam++));
+		addChild(createLightCentered<MediumLight<BlueLight>>(mm2px(Vec(PARAM_BAND_SWITCH_X, fY1)), m_pModule, nLight++));
 	}
 	// Knobs
-	addParam(createParamCentered<PointyKnob12mm>(mm2px(Vec(PARAM_BAND_RAMPUP_X, nY2)), m_pModule, nParam++));
-	addParam(createParamCentered<FilledKnob14mm>(mm2px(Vec(PARAM_BAND_FAST_X, nY1)), m_pModule, nParam++));
-	addParam(createParamCentered<FilledKnob14mm>(mm2px(Vec(PARAM_BAND_SLOW_X, nY2)), m_pModule, nParam++));
+	addParam(createParamCentered<PointyKnob12mm>(mm2px(Vec(PARAM_BAND_RAMPUP_X, fY2)), m_pModule, nParam++));
+	addParam(createParamCentered<FilledKnob14mm>(mm2px(Vec(PARAM_BAND_FAST_X, fY1)), m_pModule, nParam++));
+	addParam(createParamCentered<FilledKnob14mm>(mm2px(Vec(PARAM_BAND_SLOW_X, fY2)), m_pModule, nParam++));
 
 	// Modulation lights
-	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X - 2.5f, nY2)), m_pModule, nLight++));
-	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X + 2.5f, nY2)), m_pModule, nLight++));
+	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X - 2.5f, fY2)), m_pModule, nLight++));
+	addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X + 2.5f, fY2)), m_pModule, nLight++));
 	if (nLights > 3)
 	{
-		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X - 2.5f, nY2 + 4.0f)), m_pModule, nLight++));
-		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X + 2.5f, nY2 + 4.0f)), m_pModule, nLight++));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X - 2.5f, fY2 + 4.0f)), m_pModule, nLight++));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(PARAM_BAND_FAST_X + 2.5f, fY2 + 4.0f)), m_pModule, nLight++));
 	}
 }
 

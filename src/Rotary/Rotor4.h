@@ -32,7 +32,7 @@ public:
 ////////////////////////////////////////////////////////
 
 public:
-	Rotor4(class RotaryModule* pModule);
+	Rotor4(const class RotaryModule* pModule);
 
 ////////////////////////////////////////////////////////
 /// Public API
@@ -60,14 +60,6 @@ public:
 ////////////////////////////////////////////////////////
 
 private:
-	void Update(SpeedTarget eTarget, float fVariSpeed = 0.0f);
-	void StartRamping(int nChannel, SpeedTarget eTargetSpeed);
-
-////////////////////////////////////////////////////////
-/// Data
-////////////////////////////////////////////////////////
-
-private:
 	enum class FadeMode : int
 	{
 		Stopped,
@@ -75,6 +67,15 @@ private:
 		RampDown
 	};
 
+	void Update(SpeedTarget eTarget, float fVariSpeed = 0.0f);
+	void StartRamping(int nChannel, SpeedTarget eTargetSpeed);
+	void SetFadeMode(int nChannel, FadeMode eMode) { m_eFadeMode[nChannel] = eMode; }
+
+////////////////////////////////////////////////////////
+/// Data
+////////////////////////////////////////////////////////
+
+private:
 	// from constructor
 	const class RotaryModule* const m_pModule;
 
@@ -92,7 +93,7 @@ private:
 	std::queue<pair<int, SpeedTarget>> m_queRamp;	// used to spread out StartRamping, one channel per sample
 
 	// Operation
-	float m_fInvertedSamplerate;
+	float m_fInvertedSamplerate = 1.0f;
 	FadeMode m_eFadeMode[ROTOR4_BANDS] = { FadeMode::Stopped, FadeMode::Stopped, FadeMode::Stopped, FadeMode::Stopped };
 	float m_fTargetPhaseStep[ROTOR4_BANDS] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	simd::float_4 m_f4PhaseStepDelta = { 0.0f, 0.0f, 0.0f, 0.0f };		// increment/decrement for PhaseStep while ramping up or down

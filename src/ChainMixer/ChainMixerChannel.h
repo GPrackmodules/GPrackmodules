@@ -1,9 +1,6 @@
 #pragma once
 
-#include "ChainMixerCommon.h"
-#include "ChainMixerModule.h"
-#include "Fade.h"
-#include "Fade2.h"
+#include "ChainMixerChannelBase.h"
 
 #define MAX_CHAINMIXER_CHANNELS		16
 
@@ -11,8 +8,10 @@
 /// Module
 /////////////////////////////////////////////////////
 
-class ChainMixerChannelModule : public ChainMixerModule
+class ChainMixerChannelModule : public ChainMixerChannelBase
 {
+	using base=ChainMixerChannelBase;
+
 public:
 	enum ParamId
 	{
@@ -22,6 +21,7 @@ public:
 		ParamGain,
 		ParamSolo,
 		ParamMute,
+		ParamTrim,
 		NumParams
 	};
 	enum InputId
@@ -42,37 +42,32 @@ public:
 
 public:
 	//void SetSampleRate(float fSamplerate);
-	void onSampleRateChange(const SampleRateChangeEvent &e) override;
 	void process(const ProcessArgs& args) override;
-	void SetWidget(struct ChainMixerChannelWidget* pWidget) { m_pWidget = pWidget; }
 	bool Disabled() const override { return TypeInstance() > MAX_CHAINMIXER_CHANNELS; }
-	void ProcessAudioBusses(	// called from master channel's process() function
+	void ProcessAudioBuses(	// called from main module's process() function
 		const ProcessArgs& args,
 		float* pMainL, float* pMainR,
 		float* pAux1L, float* pAux1R,
 		float* pAux2L, float* pAux2R,
+		float fMainFactor,
+		bool bMainMute,
 		bool bAnyChannelSolo,
 		struct AuxInfo rAuxInfo[2]) override;
 
-private:
-	void FadeToZeroAndAdvance();
+protected:
+	int SoloParam() const override { return (int)ParamId::ParamSolo; }
+	int MuteParam() const override { return (int)ParamId::ParamMute; }
+	int TrimParam() const override { return (int)ParamId::ParamTrim; }
+	int GainParam() const override { return (int)ParamId::ParamGain; }
+	int PanBalParam() const override { return (int)ParamId::ParamPanBal; }
+	int Aux1Param() const override { return (int)ParamId::ParamAux1; }
+	int Aux2Param() const override { return (int)ParamId::ParamAux2; }
+	int InputLId() const override { return InputL; }
+	int InputRId() const override { return InputR; }
 
 private:
-	struct ChainMixerChannelWidget* m_pWidget = nullptr;
 	bool m_bInitialized = false;
-
-	bool m_bFadesInitialized = false;
-
-	float m_fFaderFactor = 0.0f;				// fader only
-	float m_fMainFactors[2] = { 0.0f, 0.0f };	// fader plus pan/balance, for mixes to mono use fader factor
-	Fade m_fadeMainFader;
-	Fade2 m_fadeMain;
-
-	float m_fAux1Factor = 0.0f;
-	Fade m_fadeAux1;
-
-	float m_fAux2Factor = 0.0f;
-	Fade m_fadeAux2;
+	Fade m_fadeMainMute;
 };
 
 /////////////////////////////////////////////////////
@@ -84,7 +79,7 @@ struct ChainMixerChannelWidget : ModuleWidget
 public:
 	ChainMixerChannelWidget(ChainMixerChannelModule* pModule);
 
-protected:
+	void appendContextMenu(Menu* menu) override;
 	void step() override;
 
 private:
@@ -92,6 +87,9 @@ private:
 	int m_nTypeInstance = -1;
 	bool m_bDarkMode;
 	SvgWidget* m_pNumberWidget;
+
+	int m_nRow = -1;
+	int m_nColumn = -1;
 };
 
 extern Model* the_pChainMixerChannelModel;

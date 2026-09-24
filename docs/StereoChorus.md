@@ -1,8 +1,9 @@
-<h1>Stereo Chorus</h1>
+<h1>Stereo Chorus — Four Voice Stereo Chorus Effect</h1>
 
-**Stereo Chorus** is a module in the GP plugin for VCV Rack 2
+**Stereo Chorus** is a module in the GPaudio plugin for VCV Rack 2
 
-![Stereo Chorus Module](StereoChorus.png "The Stereo Chorus Module") &nbsp; &nbsp; &nbsp;![Stereo Chorus Module](StereoChorus-dark.png "The Stereo Chorus Module")
+![Stereo Chorus Module](StereoChorus.png "The Stereo Chorus Module") &nbsp; &nbsp; &nbsp;
+![Stereo Chorus Module](StereoChorus-dark.png "The Stereo Chorus Module")
 
 <h2>Features</h2>
 
@@ -14,15 +15,15 @@ with a 90-degree phase offset.
 * Additional or exclusive external modulation of all eight independent circuits is available through modulation inputs.
 * CV inputs with attenuverters can control most parameters. 
 
-<h2>Sockets</h2>
+<h2>Inputs and Outputs</h2>
 
-* One or two audio inputs can be fed into the **IN** sockets in the lower left corner
-of the front panel. The **IN** sockets will accept all signals from polyphonic cables
+* One or two audio inputs can be fed into the **IN** ports in the lower left corner
+of the front panel. The **IN** ports will accept all signals from polyphonic cables
 and sum them together before going into the monophonic signal processing.
 * The processed signal is provided in the **OUT** section in the lower right corner.
-If both audio IN and OUT are stereo, there is no audio crossfeeding between channels,
+If both audio //IN// and //OUT// are stereo, there is no audio crossfeeding between channels,
 so Stereo Chorus can be used as a dual Mono Chorus with a shared set of parameters.
-The **OUT** sockets provide a monophonic signal.
+The **OUT** ports provide a monophonic signal.
 * **MODULATION** inputs 1 through 4 accept voltages for external
 modulation of the voices. Each modulation input can accept polyphonic cables and will
 use a signal on channel 2 for independent modulation of the right channel of each voice.
@@ -37,9 +38,9 @@ the MERGE modules to eight.
 the respective attenuverters and then applied to parameters in addition to the values
 adjusted with the front panel knobs. See below for details.
 
-<h2>Parameters</h2>
+<h2>Controls</h2>
 
-<h3>Main Parameters</h3>
+<h3>Main Controls</h3>
 
 <h4>RATE</h4>
 
@@ -112,4 +113,4 @@ result in much higher pitch changes.
 
 ![Stereo Chorus External Modulation Sample](StereoChorusExtMod.png "Polyphonic External Modulation Cable")
 <br>
-**External eight channel modulation using the VCV MERGE module**
+**External eight-channel modulation using the VCV MERGE module**

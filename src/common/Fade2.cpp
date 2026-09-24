@@ -14,7 +14,9 @@ Fade2::Fade2(float& rCoefficient1, float& rCoefficient2, float fMilliseconds, fl
 Fade2::Fade2(float& rCoefficient1, float& rCoefficient2, float fMilliseconds, float fInitialValue1, float fInitialValue2) :
 	m_rCoefficient1(rCoefficient1),
 	m_rCoefficient2(rCoefficient2),
-	m_fFadeMs(fMilliseconds)
+	m_fFadeMs(fMilliseconds),
+	m_fTarget1(fInitialValue1),
+	m_fTarget2(fInitialValue2)
 {
 	rCoefficient1 = fInitialValue1;
 	rCoefficient2 = fInitialValue2;
@@ -28,46 +30,48 @@ void Fade2::SetSamplerate(float fSamplerate)
 
 void Fade2::Start(float fTarget1, float fTarget2)
 {
-	bool bNoChange1 = false;
-	if (fTarget1 < m_rCoefficient1)
+	if (fTarget1 != m_fTarget1)
 	{
-		m_bFadingDown1 = true;
-		m_bFadingUp1 = false;
-	}
-	else if (fTarget1 > m_rCoefficient1)
-	{
-		m_bFadingDown1 = false;
-		m_bFadingUp1 = true;
-	}
-	else
-		bNoChange1 = true;
-	if (!bNoChange1)
-	{
-		m_fFadeStep1 = (fTarget1 - m_rCoefficient1) * m_fInvertedSteps;
-		m_fTarget1 = fTarget1;
+		bool bNoChange1 = false;
+		if (fTarget1 < m_rCoefficient1)
+		{
+			m_bFadingDown1 = true;
+			m_bFadingUp1 = false;
+		}
+		else if (fTarget1 > m_rCoefficient1)
+		{
+			m_bFadingDown1 = false;
+			m_bFadingUp1 = true;
+		}
+		else
+			bNoChange1 = true;
+		if (!bNoChange1)
+		{
+			m_fFadeStep1 = (fTarget1 - m_rCoefficient1) * m_fInvertedSteps;
+			m_fTarget1 = fTarget1;
+		}
 	}
 
-	bool bNoChange2 = false;
-	if (fTarget2 < m_rCoefficient2)
+	if (fTarget2 != m_fTarget2)
 	{
-		m_bFadingDown2 = true;
-		m_bFadingUp2 = false;
-	}
-	else if (fTarget2 > m_rCoefficient2)
-	{
-		m_bFadingDown2 = false;
-		m_bFadingUp2 = true;
-	}
-	else
-	{
-		bNoChange2 = true;
-		if (bNoChange1)
-			return;
-	}
-	if (!bNoChange2)
-	{
-		m_fFadeStep2 = (fTarget2 - m_rCoefficient2) * m_fInvertedSteps;
-		m_fTarget2 = fTarget2;
+		bool bNoChange2 = false;
+		if (fTarget2 < m_rCoefficient2)
+		{
+			m_bFadingDown2 = true;
+			m_bFadingUp2 = false;
+		}
+		else if (fTarget2 > m_rCoefficient2)
+		{
+			m_bFadingDown2 = false;
+			m_bFadingUp2 = true;
+		}
+		else
+			bNoChange2 = true;
+		if (!bNoChange2)
+		{
+			m_fFadeStep2 = (fTarget2 - m_rCoefficient2) * m_fInvertedSteps;
+			m_fTarget2 = fTarget2;
+		}
 	}
 }
 

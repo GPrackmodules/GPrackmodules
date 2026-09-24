@@ -72,7 +72,7 @@ public:
 	AB8Widget(AB8Module* pModule);
 
 public:
-	void SetState(bool bB);
+	void SetState(bool bB) const;
 
 private:
 	shared_ptr<rack::window::Svg> m_pSvgA;
