@@ -1,7 +1,7 @@
 <h1>GPrackmodules Change Log</h1>
 
 <h2>Version 2.2.0</h2>
-Date: t.b.d.
+Sep 24, 2026
 
 <h4>New Modules</h4>
 
