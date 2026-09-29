@@ -154,7 +154,7 @@ void ChainMixerChannelBase::ProcessAudioBuses(
 		m_fadeAux2.SetSamplerate(args.sampleRate);
 		m_fadeMainBus.SetSamplerate(args.sampleRate);
 	}
-	bool bAnyAuxSolo = (rAuxInfo[0].bSolo || rAuxInfo[1].bSolo);
+	bool bAnyAuxSolo = rAuxInfo[0].bSolo || rAuxInfo[1].bSolo;
 	bool bHaveMono = false;
 	bool bHaveStereo = false;
 	bool bNeedMono = false;
@@ -189,8 +189,8 @@ void ChainMixerChannelBase::ProcessAudioBuses(
 	//
 	// determine required output signals
 	//
-	if (m_fMainBusFactor > 0.0f)
-	{
+	// if (m_fMainBusFactor > 0.0f)
+	// {
 		if (pMainL != nullptr)
 		{
 			if (pMainR != nullptr)
@@ -198,7 +198,7 @@ void ChainMixerChannelBase::ProcessAudioBuses(
 			else
 				bNeedMono = true;
 		}
-	}
+	// }
 	if (pAux1L != nullptr)
 	{
 		if (pAux1R != nullptr)

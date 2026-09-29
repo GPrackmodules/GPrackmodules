@@ -38,8 +38,7 @@ static shared_ptr<Svg> NumberSvg(int nNumber)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ChainMixerChannelModule::ChainMixerChannelModule() :
-	ChainMixerChannelBase(ChainMixerModule::ModuleType::Channel),
-	m_fadeMainMute(m_fMainBusFactor, FADE_MS, 1.0f)
+	ChainMixerChannelBase(ChainMixerModule::ModuleType::Channel)
 {
 	config(NumParams, NumInputs, 0, NumLights);
 	configParam<SendQuantity>(ParamAux1, 0.f, SEND_STEPS_F, 0.f, "Aux 1 Send Level");

@@ -67,7 +67,6 @@ protected:
 
 private:
 	bool m_bInitialized = false;
-	Fade m_fadeMainMute;
 };
 
 /////////////////////////////////////////////////////
@@ -79,7 +78,7 @@ struct ChainMixerChannelWidget : ModuleWidget
 public:
 	ChainMixerChannelWidget(ChainMixerChannelModule* pModule);
 
-	void appendContextMenu(Menu* menu) override;
+	void appendContextMenu(Menu* pMainMenu) override;
 	void step() override;
 
 private:
@@ -87,9 +86,6 @@ private:
 	int m_nTypeInstance = -1;
 	bool m_bDarkMode;
 	SvgWidget* m_pNumberWidget;
-
-	int m_nRow = -1;
-	int m_nColumn = -1;
 };
 
 extern Model* the_pChainMixerChannelModel;

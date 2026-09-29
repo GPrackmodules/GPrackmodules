@@ -190,10 +190,10 @@ bool ChainMixerExtChannelModule::HandleMuteMain(bool bForce /*= false*/)
 	if (bChanged || bForce)
 	{
 		m_bMuteMain = bMuteMain;
-		if (bMuteMain)
-			m_fadeMainBus.Start(0.0f);
-		else
-			m_fadeMainBus.Start(1.0f);
+		// if (bMuteMain)
+		// 	m_fadeMainBus.Start(0.0f);
+		// else
+		// 	m_fadeMainBus.Start(1.0f);
 	}
 	return bChanged;
 }
@@ -228,12 +228,12 @@ void ChainMixerExtChannelModule::AddMonoStereoRequirements(bool& rNeedMono, bool
 
 bool ChainMixerExtChannelModule::Solo() /*override*/
 {
-	return ChainMixerModule::Solo() || (inputs[InputCVSolo].getVoltage() > 1.0f);
+	return ChainMixerModule::Solo() || inputs[InputCVSolo].getVoltage() > 1.0f;
 }
 
 bool ChainMixerExtChannelModule::Mute() /*override*/
 {
-	return ChainMixerModule::Mute() || (inputs[InputCVMute].getVoltage() > 1.0f);
+	return ChainMixerModule::Mute() || inputs[InputCVMute].getVoltage() > 1.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
