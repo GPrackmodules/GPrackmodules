@@ -1,5 +1,11 @@
 <h1>GPrackmodules Change Log</h1>
 
+<h2>Version 2.3.0</h2>
+t.b.d.
+
+  - Fixed missing audio in ChainMixer when modules were frshly inserted.
+
+
 <h2>Version 2.2.0</h2>
 Sep 24, 2026
 
