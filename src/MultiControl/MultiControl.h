@@ -135,7 +135,7 @@ template <int NUM_INDEV>
 struct MultiControlWidget : ModuleWidget
 {
 public:
-	MultiControlWidget(MultiControlModule<NUM_INDEV>* pModule);
+	explicit MultiControlWidget(MultiControlModule<NUM_INDEV>* pModule);
 	void appendContextMenu(Menu* pMainMenu) override;
 };
 

@@ -8,7 +8,6 @@
 class ChorusDelayLine
 {
 public:
-public:
 	ChorusDelayLine(float fSamplerate, int nChannels, float dMaxDelayS);
 	ChorusDelayLine(const ChorusDelayLine&) = delete;
 	~ChorusDelayLine();

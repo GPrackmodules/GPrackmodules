@@ -8,6 +8,8 @@ The following modules are included:
 - [Rotary](docs/Rotary.md) – A rotating speaker effect inspired by the famous hardware speaker cabinets
 - [Stereo Chorus](docs/StereoChorus.md) – A stereo chorus effect with up to four stereo voices with external control and modulation through CV inputs
 - [Chained Mixer](docs/ChainedMixer.md) – Modules for a modular stereo mixer including Input channels, a Main and an Aux section
+- [Dual Control](docs/DualTripleControl.md) and [Triple Control](docs/DualTripleControl.md) – Play your synth from multiple keyboaards, MPE controllers or sequencers
+- [Clamp](docs/Clamp.md) – Limit V/Oct to a note range, drop, octave-shift or limit out-of-range notes
 - [AB4](docs/AB4.md) – 4 channel AB switcher for audio and Ccontrol voltages
 - [AB8](docs/AB4.md) – 8 channel AB switcher for audio and Ccontrol voltages
 

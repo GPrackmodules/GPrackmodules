@@ -112,14 +112,13 @@ void ChainMixerMainModule::DetermineSolo(ChainMixerAuxModule*& rpAuxModule)
 	{
 		if (pModule->Disabled())
 			continue;
-		if (((pModule->Type() == ChainMixerModule::ModuleType::Channel) ||
-			(pModule->Type() == ChainMixerModule::ModuleType::ExtChannel))
-			&& !pModule->Disabled())
+		if ((pModule->Type() == ChainMixerModule::ModuleType::Channel ||
+			pModule->Type() == ChainMixerModule::ModuleType::ExtChannel))
 		{
 			if (pModule->Solo())
 				m_bAnyChannelSolo = true;
 		}
-		else if (pModule->Type() == ChainMixerModule::ModuleType::Aux && !pModule->Disabled())
+		else if (pModule->Type() == ChainMixerModule::ModuleType::Aux)
 		{
 			rpAuxModule = dynamic_cast<ChainMixerAuxModule*>(pModule);
 			rpAuxModule->GetAuxInfo(m_AuxInfo);
@@ -134,12 +133,13 @@ void ChainMixerMainModule::DetermineSolo(ChainMixerAuxModule*& rpAuxModule)
 	{
 		if (pModule->Disabled())
 			continue;
-		if (pModule->Type() == ChainMixerModule::ModuleType::Channel && !pModule->Disabled())
+		if (pModule->Type() == ChainMixerModule::ModuleType::Channel ||
+			pModule->Type() == ChainMixerModule::ModuleType::ExtChannel)
 		{
 			if (pModule->Solo())
 				m_bAnyChannelSolo = true;
 		}
-		else if (pModule->Type() == ChainMixerModule::ModuleType::Aux && !pModule->Disabled())
+		else if (pModule->Type() == ChainMixerModule::ModuleType::Aux)
 		{
 			rpAuxModule = dynamic_cast<ChainMixerAuxModule*>(pModule);
 			rpAuxModule->GetAuxInfo(m_AuxInfo);
@@ -172,7 +172,7 @@ void ChainMixerMainModule::SetupBuses()
 			m_fMainL = 0.0f;
 		}
 		else
-			m_pMainL = nullptr;;
+			m_pMainL = nullptr;
 		m_pMainR = nullptr;
 	}
 	if (m_AuxInfo[0].bConnected)
@@ -218,8 +218,8 @@ void ChainMixerMainModule::ProcessChannelModules(const ProcessArgs& args)
 	auto pModule = dynamic_cast<ChainMixerModule*>(leftExpander.module);
 	while (pModule != nullptr)
 	{
-		if (((pModule->Type() == ChainMixerModule::ModuleType::Channel) ||
-			(pModule->Type() == ChainMixerModule::ModuleType::ExtChannel)) &&
+		if ((pModule->Type() == ChainMixerModule::ModuleType::Channel ||
+			pModule->Type() == ChainMixerModule::ModuleType::ExtChannel) &&
 			!pModule->Disabled())
 		{
 			pModule->ProcessAudioBuses(args,
@@ -236,8 +236,8 @@ void ChainMixerMainModule::ProcessChannelModules(const ProcessArgs& args)
 	pModule = dynamic_cast<ChainMixerModule*>(rightExpander.module);
 	while (pModule != nullptr)
 	{
-		if (((pModule->Type() == ChainMixerModule::ModuleType::Channel) ||
-			(pModule->Type() == ChainMixerModule::ModuleType::ExtChannel))
+		if ((pModule->Type() == ChainMixerModule::ModuleType::Channel ||
+			pModule->Type() == ChainMixerModule::ModuleType::ExtChannel)
 			&& !pModule->Disabled())
 		{Mute(),
 			pModule->ProcessAudioBuses(args,
@@ -300,7 +300,7 @@ void ChainMixerMainModule::ProcessAudioBuses(
 		{
 			outputs[OutputL].setVoltage(m_fMainL);
 			outputs[OutputR].setVoltage(m_fMainR);
-			bOver = bOver || (m_fMainR < -m_fOverVolt || m_fMainR >= m_fOverVolt);
+			bOver = bOver || m_fMainR < -m_fOverVolt || m_fMainR >= m_fOverVolt;
 		}
 		else
 		{
@@ -350,10 +350,10 @@ ChainMixerMainWidget::ChainMixerMainWidget(ChainMixerMainModule* pModule)
 	setModule(pModule);
 	setPanel(createPanel(asset::plugin(the_pPluginInstance, "res/ChainMixerMain.svg"), asset::plugin(the_pPluginInstance, "res/ChainMixerMain-dark.svg")));
 
-	addChild(createWidget<ThemedScrew>(Vec(0, 0)));
+	//addChild(createWidget<ThemedScrew>(Vec(0, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+	//addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 	addParam(createParamCentered<PointyKnob10mm>(mm2px(Vec(RIGHT_3U_MM, KNOB_AUX1_Y_MM)), pModule, ChainMixerMainModule::ParamAux1));
 	addParam(createParamCentered<PointyKnob10mm>(mm2px(Vec(RIGHT_3U_MM, KNOB_AUX2_Y_MM)), pModule, ChainMixerMainModule::ParamAux2));
@@ -377,8 +377,6 @@ void ChainMixerMainWidget::appendContextMenu(Menu* pMainMenu) /*override*/
 		return;
 
 	WeakPtr<ModuleWidget> weakThis = this;
-	if (!weakThis)
-		return;
 
 	pMainMenu->addChild(new MenuSeparator);
 	MenuItem* pThresholdSubMenu = createSubmenuItem("OVR Threshold", "", [=](ui::Menu* pSubMenu)

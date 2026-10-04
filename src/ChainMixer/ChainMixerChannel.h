@@ -76,7 +76,7 @@ private:
 struct ChainMixerChannelWidget : ModuleWidget
 {
 public:
-	ChainMixerChannelWidget(ChainMixerChannelModule* pModule);
+	explicit ChainMixerChannelWidget(ChainMixerChannelModule* pModule);
 
 	void appendContextMenu(Menu* pMainMenu) override;
 	void step() override;

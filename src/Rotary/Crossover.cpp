@@ -17,7 +17,7 @@
 #endif
 
 Crossover::Crossover(bool b24dBPerOct) :
-	m_b24dBPerOct(b24dBPerOct),
+	// m_b24dBPerOct(b24dBPerOct),
 	m_f4A1(0.0f),
 	m_f4A2(0.0f),
 	m_f4B0(0.0f),

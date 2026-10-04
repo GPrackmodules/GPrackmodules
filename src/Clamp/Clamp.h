@@ -68,7 +68,6 @@ private:
 		Limit
 	};
 
-	struct ClampWidget* m_pWidget = nullptr;
 	bool m_bInitialized = false;
 
 	bool m_bError = false;
@@ -86,9 +85,7 @@ private:
 struct ClampWidget : ModuleWidget
 {
 public:
-	ClampWidget(ClampModule* pModule);
-
-private:
+	explicit ClampWidget(ClampModule* pModule);
 };
 
 extern Model* the_pClampModel;

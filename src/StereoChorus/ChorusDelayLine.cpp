@@ -50,7 +50,7 @@ float ChorusDelayLine::Read(int nChannel, float fDelayS) const
 
 	float fReturn = 0.0;
 	for (int i =0; i < N_TAPS; i++)
-		fReturn += (*(pDelayLine++)) * (*(pIR++));
+		fReturn += *pDelayLine++ * *pIR++;
 	return fReturn;
 }
 

@@ -154,7 +154,7 @@ private:
 struct StereoChorusWidget : ModuleWidget
 {
 public:
-	StereoChorusWidget(StereoChorusModule* pModule);
+	explicit StereoChorusWidget(StereoChorusModule* pModule);
 
 	void step() override;
 

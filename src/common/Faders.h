@@ -12,7 +12,7 @@
 #define SEND_STEPS			256
 #define SEND_STEPS_F		(static_cast<float>(SEND_STEPS))
 
-struct FaderGainQuantity : public ParamQuantity
+struct FaderGainQuantity : ParamQuantity
 {
 	FaderGainQuantity();
 	static float GainFactor(float fParam);
@@ -24,7 +24,7 @@ private:
 	static float FaderdB2Param(float fdB);
 };
 
-struct PanBalQuantity : public ParamQuantity
+struct PanBalQuantity : ParamQuantity
 {
 	PanBalQuantity();
 	static float GainFactorL(float fParam, bool bIsBalance);
@@ -35,7 +35,7 @@ private:
 	static int ParamToIndex(float fParam);
 };
 
-struct SendQuantity : public ParamQuantity
+struct SendQuantity : ParamQuantity
 {
 	SendQuantity();
 	static float GainFactor(float fParam);
@@ -54,7 +54,7 @@ protected:
 	};
 
 public:
-	GPaudioFader(FaderLength eFaderLength);
+	explicit GPaudioFader(FaderLength eFaderLength);
 	void UpdateDarkMode();
 	static float GainFactor(float fParam);
 	void drawLayer(const widget::Widget:: DrawArgs &args, int nLayer) override;
@@ -66,17 +66,17 @@ private:
 	shared_ptr<Svg> m_pDarkBackgroundSvg;
 };
 
-struct GPaudioSlider32mm : public GPaudioFader
+struct GPaudioSlider32mm : GPaudioFader
 {
 	GPaudioSlider32mm() : GPaudioFader(GPaudioFader::FaderLength::Fader32mm) {}
 };
 
-struct GPaudioSlider38mm : public GPaudioFader
+struct GPaudioSlider38mm : GPaudioFader
 {
 	GPaudioSlider38mm() : GPaudioFader(GPaudioFader::FaderLength::Fader38mm) {}
 };
 
-struct GPaudioSlider44mm : public GPaudioFader
+struct GPaudioSlider44mm : GPaudioFader
 {
 	GPaudioSlider44mm() : GPaudioFader(GPaudioFader::FaderLength::Fader44mm) {}
 };

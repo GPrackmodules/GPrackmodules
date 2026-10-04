@@ -107,9 +107,9 @@ private:
 struct ChainMixerExtChannelWidget : ModuleWidget
 {
 public:
-	ChainMixerExtChannelWidget(ChainMixerExtChannelModule* pModule);
+	explicit ChainMixerExtChannelWidget(ChainMixerExtChannelModule* pModule);
 
-	void appendContextMenu(Menu* menu) override;
+	void appendContextMenu(Menu* pMainMenu) override;
 	void step() override;
 
 private:

@@ -225,29 +225,29 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 	// reading output from delay lines
 	float fRotorL = 1.0f + m_Rotor4.OutputL(BandHi1);
 	float fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorL;
-	lights[Light_Hi1L].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
+	lights[Light_Hi1L].setBrightness(GREEN_OFF + fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f);
 	float fOutL = m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 	float fOutR = 0.0f;
-	float fRotorR = 0.0f;
+	float fRotorR;
 	if (m_bStereo)
 	{
 		fRotorR = 1.0f + m_Rotor4.OutputR(BandHi1);
 		fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorR;
-		lights[Light_Hi1R].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
+		lights[Light_Hi1R].setBrightness(GREEN_OFF + fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f);
 		fOutR = m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 	}
 	if (m_bDoubleHi)
 	{
 		fRotorL = 1.0f + m_Rotor4.OutputL(BandHi2);
 		fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorL;
-		lights[Light_Hi2L].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
+		lights[Light_Hi2L].setBrightness(GREEN_OFF + fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f);
 		fOutL += m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 		fOutL *= s_fMinus4Pt5dB;
 		if (m_bStereo)
 		{
 			fRotorR = 1.0f + m_Rotor4.OutputR(BandHi2);
 			fGainFactor = 1.0f - m_fTrebleGainDepth * fRotorR;
-			lights[Light_Hi2R].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
+			lights[Light_Hi2R].setBrightness(GREEN_OFF + fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f);
 			fOutR += m_pDelayHi->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 			fOutR *= s_fMinus4Pt5dB;
 		}
@@ -256,13 +256,13 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 	// Bass and Mid rotate in the opposite direction, swap L and R rotor values
 	fRotorL = 1.0f + m_Rotor4.OutputR(BandLo);
 	fGainFactor = 1.0f - m_fBassGainDepth * fRotorL;
-	lights[Light_LoL].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
+	lights[Light_LoL].setBrightness(GREEN_OFF + fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f);
 	fOutL += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 	if (m_bStereo)
 	{
 		fRotorR = 1.0f + m_Rotor4.OutputL(BandLo);
 		fGainFactor = 1.0f - m_fBassGainDepth * fRotorR;
-		lights[Light_LoR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
+		lights[Light_LoR].setBrightness(GREEN_OFF + fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f);
 		fOutR += m_pDelayLo->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 	}
 
@@ -270,13 +270,13 @@ void RotaryModule::process(const ProcessArgs& args) /*override*/
 	{
 		fRotorL = 1.0f + m_Rotor4.OutputR(BandMid);
 		fGainFactor = 1.0f - m_fMidGainDepth * fRotorL;
-		lights[Light_MidL].setBrightness(GREEN_OFF + (fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f));
+		lights[Light_MidL].setBrightness(GREEN_OFF + fRotorL * (GREEN_ON - GREEN_OFF) / 2.0f);
 		fOutL += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorL) * fGainFactor;
 		if (m_bStereo)
 		{
 			fRotorR = 1.0f + m_Rotor4.OutputL(BandMid);
 			fGainFactor = 1.0f - m_fMidGainDepth * fRotorR;
-			lights[Light_MidR].setBrightness(GREEN_OFF + (fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f));
+			lights[Light_MidR].setBrightness(GREEN_OFF + fRotorR * (GREEN_ON - GREEN_OFF) / 2.0f);
 			fOutR += m_pDelayMid->Read(MIN_DELAY + DIAMETER_DELAY * fRotorR) * fGainFactor;
 		}
 	}

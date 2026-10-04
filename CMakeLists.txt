@@ -47,6 +47,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/src/Rotary
 	${CMAKE_SOURCE_DIR}/src/Clamp
 	${CMAKE_SOURCE_DIR}/src/MultiControl
+	${CMAKE_SOURCE_DIR}/src/PhraseSelect
 )
 
 target_sources(${RACK_PLUGIN_LIB} PRIVATE
@@ -74,4 +75,5 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/Rotary/Crossover.cpp
 	src/Rotary/Rotor4.cpp
 	src/Clamp/Clamp.cpp
+	src/PhraseSelect/PhraseSelect.cpp
 )

@@ -6,7 +6,7 @@
 
 #pragma once
 
-struct MultiParamChange : public history::Action
+struct MultiParamChange : history::Action
 {
 	MultiParamChange();
 

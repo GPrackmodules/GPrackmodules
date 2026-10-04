@@ -1,5 +1,11 @@
 <h1>GPrackmodules Change Log</h1>
 
+<h2>Version 2.3.0</h2>
+t.b.d.
+
+  - Fixed missing audio in ChainMixer when modules were frshly inserted.
+
+
 <h2>Version 2.2.0</h2>
 Sep 24, 2026
 
@@ -11,7 +17,7 @@ keyboards, MPE controllers and/or sequencers simultaneously.
   * **Extended Channel** module for **Chained Mixer** — input channel with Direct Out, additional 
 controls and CV control.
 
-<h4>Updates</h4>
+<h4>Other Updates</h4>
 
   * **Chained Mixer Main** Module: added OVR light with a configurable dB threshold.
   * **Chained Mixer**: added CTRL/CMD and SHIFT key modifiers on Mute and Solo buttons, inspired
@@ -28,7 +34,7 @@ Date: Feb 15, 2026
   * New Module **Rotary** — a rotating speaker simulation
   * New module **AB8** — an 8-channel A/B switcher for audio and CV
 
-<h4>Updates</h4>
+<h4>Other Updates</h4>
 
   * **Stereo Chorus**: CPU optimizations
   * **AB4**: CV output reflecting A/B state

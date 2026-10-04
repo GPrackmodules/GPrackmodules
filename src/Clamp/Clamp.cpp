@@ -91,7 +91,7 @@ public:
 				}
 			if (nNote < 0)
 				return;
-			setValue(static_cast<float>(((nOctave - 4) * 12 + nNote)));
+			setValue(static_cast<float>((nOctave - 4) * 12 + nNote));
 		}
 	}
 
@@ -174,7 +174,7 @@ void ClampModule::process(const ProcessArgs& args) /*override*/
 			}
 			for (uint8_t c = 0; c < n; c += 4)
 			{
-				simd::float_4 f4In = inputs[InputVOct].getPolyVoltageSimd<simd::float_4>(c);
+				auto f4In = inputs[InputVOct].getPolyVoltageSimd<simd::float_4>(c);
 				outputs[OutputVOct].setVoltageSimd(simd::clamp(f4In, m_fLowerVOct, m_fUpperVOct), c);
 				f4In = inputs[InputGate].getPolyVoltageSimd<simd::float_4>(c);
 				outputs[OutputGate].setVoltageSimd(f4In, c);

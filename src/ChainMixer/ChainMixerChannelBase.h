@@ -7,7 +7,7 @@
 #define TRIM_STEPS			180 // Parameter values go from -TRIM_STEPS to +TRIM_STEPS => +/- TRIM_STEPS/10 dB
 #define TRIM_STEPS_F		(static_cast<float>(TRIM_STEPS))
 
-struct TrimQuantity : public ParamQuantity
+struct TrimQuantity : ParamQuantity
 {
 	TrimQuantity();
 

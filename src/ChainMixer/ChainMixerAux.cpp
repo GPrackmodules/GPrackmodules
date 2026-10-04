@@ -391,10 +391,10 @@ ChainMixerAuxWidget::ChainMixerAuxWidget(ChainMixerAuxModule* pModule)
 	setModule(pModule);
 	setPanel(createPanel(asset::plugin(the_pPluginInstance, "res/ChainMixerAux.svg"), asset::plugin(the_pPluginInstance, "res/ChainMixerAux-dark.svg")));
 
-	addChild(createWidget<ThemedScrew>(Vec(0, 0)));
+	//addChild(createWidget<ThemedScrew>(Vec(0, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+	//addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 	m_pFader1 = createParamCentered<GPaudioSlider38mm>(mm2px(Vec(CENTER_LEFT_MM, AUXSLIDER_Y_MM)), pModule, ChainMixerAuxModule::ParamGain1);
 	addParam(m_pFader1);

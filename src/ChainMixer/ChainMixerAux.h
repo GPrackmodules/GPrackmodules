@@ -89,9 +89,9 @@ private:
 struct ChainMixerAuxWidget : ModuleWidget
 {
 public:
-	ChainMixerAuxWidget(ChainMixerAuxModule* pModule);
+	explicit ChainMixerAuxWidget(ChainMixerAuxModule* pModule);
 
-	void appendContextMenu(Menu* menu) override;
+	void appendContextMenu(Menu* pMainMenu) override;
 	void step() override;
 
 private:

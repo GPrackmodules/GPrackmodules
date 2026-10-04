@@ -1,7 +1,7 @@
 {
   "slug": "GP",
   "name": "GPrackmodules",
-  "version": "2.2.1",
+  "version": "2.3.1",
   "license": "GPL-3.0-or-later",
   "brand": "GPaudio",
   "author": "GP",
@@ -39,7 +39,7 @@
       "slug": "DualControl",
       "name": "Dual Control Merge",
       "description": "Play your synth from two keyboards, MPE controllers or sequencers simultaneously",
-      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/DualControl.html",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/DualTripleControl.html",
       "tags": [
         "Utility",
         "Polyphonic"
@@ -49,7 +49,7 @@
       "slug": "TripleControl",
       "name": "Triple Control Merge",
       "description": "Play your synth from three keyboards, MPE controllers or sequencers simultaneously",
-      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/TripleControl.html",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/DualTripleControl.html",
       "tags": [
         "Utility",
         "Polyphonic"
@@ -122,6 +122,15 @@
       "tags": [
         "Utility",
         "Polyphonic"
+      ]
+    },
+    {
+      "slug": "Phrase",
+      "name": "Triggered Phrase Selector (C3-c5) for Sequencers",
+      "description": "Adds trigger control to sequencers with a C3-C5 phrase selection input",
+      "manualUrl": "https://gprackmodules.github.io/GPrackmodules/Song.html",
+      "tags": [
+        "Utility"
       ]
     }
   ]

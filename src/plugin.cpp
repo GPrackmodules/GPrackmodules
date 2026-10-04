@@ -9,7 +9,8 @@
 #include "StereoChorus/StereoChorus.h"
 #include "Rotary/Rotary.h"
 #include "Clamp/Clamp.h"
-#include "MultiControl/MultiControl.h" // contains Dual- and TripleControl models
+#include "MultiControl/MultiControl.h" // contains Dual- and TripleControl models, template class
+#include "PhraseSelect/PhraseSelect.h"
 
 Plugin* the_pPluginInstance;
 
@@ -47,20 +48,21 @@ bool StrToFloat(const char* psz, float& f, const char** ppParsedUntil /*= nullpt
 	return pEnd != psz && errno != ERANGE;
 }
 
-void init(Plugin* p)
+void init(Plugin* plugin)
 {
-	the_pPluginInstance = p;
+	the_pPluginInstance = plugin;
 
 	// Add modules here
-	p->addModel(the_pAB4Model);
-	p->addModel(the_pAB8Model);
-	p->addModel(the_pChainMixerChannelModel);
-	p->addModel(the_pChainMixerExtChannelModel);
-	p->addModel(the_pChainMixerMainModel);
-	p->addModel(the_pChainMixerAuxModel);
-	p->addModel(the_pStereoChorusModel);
-	p->addModel(the_pRotaryModel);
-	p->addModel(the_pClampModel);
-	p->addModel(the_pDualControlModel);
-	p->addModel(the_pTripleControlModel);
+	plugin->addModel(the_pAB4Model);
+	plugin->addModel(the_pAB8Model);
+	plugin->addModel(the_pChainMixerChannelModel);
+	plugin->addModel(the_pChainMixerExtChannelModel);
+	plugin->addModel(the_pChainMixerMainModel);
+	plugin->addModel(the_pChainMixerAuxModel);
+	plugin->addModel(the_pStereoChorusModel);
+	plugin->addModel(the_pRotaryModel);
+	plugin->addModel(the_pClampModel);
+	plugin->addModel(the_pDualControlModel);
+	plugin->addModel(the_pTripleControlModel);
+	plugin->addModel(the_pPhraseSelectModel);
 }

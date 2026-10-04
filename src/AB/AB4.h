@@ -38,7 +38,6 @@ public:
 		NumLights
 	};
 
-public:
 	AB4Module();
 
 public:
@@ -47,7 +46,7 @@ public:
 	void SetWidget(struct AB4Widget* pWidget) { m_pWidget = pWidget; }
 
 private:
-	struct AB4Widget* m_pWidget = nullptr;
+	AB4Widget* m_pWidget = nullptr;
 	dsp::SchmittTrigger m_trigAB;
 	bool m_bParamB = false;
 	bool m_bInputB = false;
@@ -57,7 +56,7 @@ private:
 struct AB4Widget : ModuleWidget
 {
 public:
-	AB4Widget(AB4Module* pModule);
+	explicit AB4Widget(AB4Module* pModule);
 
 public:
 	void SetState(bool bB) const;

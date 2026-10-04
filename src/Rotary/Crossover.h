@@ -17,7 +17,7 @@ class Crossover
 ////////////////////////////////////////////////////////////
 
 public:
-	Crossover(bool b24dBPerOct); // parameter reserved for future expansion
+	explicit Crossover(bool b24dBPerOct); // parameter reserved for future expansion
 
 ////////////////////////////////////////////////////////////
 /// Public API
@@ -57,7 +57,6 @@ private:
 		CrossoverBands	// number of bands
 	};
 
-	const bool m_b24dBPerOct;		// Currently without function, crossover is 12 dB/oct
 	float m_fSamplerate = 0.0f;
 
 	bool m_bThreeWay = false;

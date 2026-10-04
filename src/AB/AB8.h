@@ -59,7 +59,7 @@ public:
 	void SetWidget(struct AB8Widget* pWidget) { m_pWidget = pWidget; }
 
 private:
-	struct AB8Widget* m_pWidget = nullptr;
+	AB8Widget* m_pWidget = nullptr;
 	dsp::SchmittTrigger m_trigAB;
 	bool m_bParamB = false;
 	bool m_bInputB = false;
@@ -69,7 +69,7 @@ private:
 struct AB8Widget : ModuleWidget
 {
 public:
-	AB8Widget(AB8Module* pModule);
+	explicit AB8Widget(AB8Module* pModule);
 
 public:
 	void SetState(bool bB) const;

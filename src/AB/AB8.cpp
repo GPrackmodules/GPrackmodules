@@ -53,7 +53,7 @@ void AB8Module::process(const ProcessArgs& args) /*override*/
 	}
 
 	bool bParamB = params[ParamAB].getValue() > 0.5f;
-	bool bInputB = (inputs[InputAB].getVoltage() > 1.0f);
+	bool bInputB = inputs[InputAB].getVoltage() > 1.0f;
 	if (bParamB != m_bParamB || bInputB != m_bInputB)
 	{
 		m_bParamB = bParamB;

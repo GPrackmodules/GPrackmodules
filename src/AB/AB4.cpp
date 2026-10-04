@@ -41,7 +41,7 @@ void AB4Module::process(const ProcessArgs& args) /*override*/
 	}
 
 	bool bParamB = params[ParamAB].getValue() > 0.5f;
-	bool bInputB = (inputs[InputAB].getVoltage() > 1.0f);
+	bool bInputB = inputs[InputAB].getVoltage() > 1.0f;
 	if (bParamB != m_bParamB || bInputB != m_bInputB)
 	{
 		m_bParamB = bParamB;
@@ -113,10 +113,10 @@ AB4Widget::AB4Widget(AB4Module* pModule)
 	setModule(pModule);
 	setPanel(createPanel(asset::plugin(the_pPluginInstance, "res/AB4.svg"), asset::plugin(the_pPluginInstance, "res/AB4-dark.svg")));
 
-	addChild(createWidget<ThemedScrew>(Vec(0, 0)));
+	// addChild(createWidget<ThemedScrew>(Vec(0, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, 0)));
 	addChild(createWidget<ThemedScrew>(Vec(0, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-	addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+	// addChild(createWidget<ThemedScrew>(Vec(box.size.x - RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 	float fX = 5.5f;
 	float fY = 27.0f;

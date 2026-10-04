@@ -17,7 +17,7 @@
 class FilledKnob : public RoundKnob
 {
 protected:
-	FilledKnob(int nMillimeter);
+	explicit FilledKnob(int nMillimeter);
 
 	// Nothing else here, since FilledKnob (unlike PointyKnob) doesn't have different SVGs for light and dark mode
 };
@@ -25,7 +25,7 @@ protected:
 class PointyKnob : public RoundKnob
 {
 protected:
-	PointyKnob(int nMillimeter);
+	explicit PointyKnob(int nMillimeter);
 
 public:
 	void step() override;

@@ -18,7 +18,6 @@
 class MilliSampleDelayLine
 {
 public:
-public:
 	MilliSampleDelayLine(float fSamplerate, float dMaxDelayS);
 	MilliSampleDelayLine(const MilliSampleDelayLine&) = delete;
 	~MilliSampleDelayLine();

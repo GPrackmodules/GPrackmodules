@@ -117,7 +117,7 @@ void Rotor4::StartRamping(int nChannel, SpeedTarget eTargetSpeed)
 			fTime = m_fRampupTime[nChannel] * Ramp_DOWN_FACTOR_FAST_TO_SLOW;	// fast to slow Ramps down a little faster than parking completely
 		else
 			fTime = m_fRampupTime[nChannel] * RAMP_DOWN_FACTOR;
-		fTime *= (m_f4PhaseStep.s[nChannel] - m_fTargetPhaseStep[nChannel]);
+		fTime *= m_f4PhaseStep.s[nChannel] - m_fTargetPhaseStep[nChannel];
 		if (m_fFastPhaseStepPrevious[nChannel] > 0.0f)
 			fTime /= m_fFastPhaseStepPrevious[nChannel];
 		else
@@ -158,7 +158,7 @@ void Rotor4::StartRamping(int nChannel, SpeedTarget eTargetSpeed)
 void Rotor4::PhaseOffsetLR(float fDegree)
 {
 	m_fPhaseOffsetLR = fDegree / 360.0f;
-	m_fParkPosition = 0.25f - (m_fPhaseOffsetLR / 2.0f);	// park in the middle between left and right mics
+	m_fParkPosition = 0.25f - m_fPhaseOffsetLR / 2.0f;	// park in the middle between left and right mics
 	if (m_fParkPosition < 0.0f)
 		m_fParkPosition += 1.0f;
 	for (int c = 0; c < ROTOR4_BANDS; c++)
