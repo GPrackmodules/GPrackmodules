@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="-20.708127"
-     inkscape:cy="342.94679"
+     inkscape:zoom="2.8"
+     inkscape:cx="14.285714"
+     inkscape:cy="325.89286"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -36,10 +36,10 @@
      inkscape:snap-page="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-edge-midpoints="false"
-     inkscape:window-width="1842"
-     inkscape:window-height="1128"
-     inkscape:window-x="2636"
-     inkscape:window-y="0"
+     inkscape:window-width="2488"
+     inkscape:window-height="1290"
+     inkscape:window-x="2660"
+     inkscape:window-y="66"
      inkscape:window-maximized="0"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-nodes="false"
@@ -76,7 +76,8 @@
        x="14.66"
        y="255.49998"
        style="fill:#848483;fill-opacity:1;stroke-width:0.219359"
-       ry="0.68789285" />
+       ry="0.68800002"
+       rx="0.68800002" />
     <g
        aria-label="OUT"
        id="text94586-3"
@@ -102,8 +103,9 @@
        height="32"
        x="-10.74"
        y="255.49998"
-       ry="2.5358338"
-       transform="scale(-1,1)" />
+       ry="0.68800002"
+       transform="scale(-1,1)"
+       rx="0.68800002" />
     <g
        aria-label="IN"
        id="text92668"
@@ -126,7 +128,7 @@
        aria-label="P"
        id="text41381"
        style="font-weight:bold;font-size:12.2835px;line-height:1.25;font-family:'Gotham Rounded';-inkscape-font-specification:'Gotham Rounded Bold';letter-spacing:-0.07px;fill:#999999"
-       transform="matrix(0.33379305,0,0,0.33379305,-14.978134,172.06849)">
+       transform="matrix(0.33379305,0,0,0.33379305,-12.550449,172.06849)">
       <path
          id="path44464"
          d="m 75.468978,363.37891 c 0,0.52819 0.417639,0.94583 0.94583,0.94583 0.52819,0 0.945829,-0.41764 0.945829,-0.94583 v -1.70741 h 1.43717 c 1.928509,0 3.47623,-1.01953 3.47623,-3.02174 v -0.0246 c 0,-1.76882 -1.240633,-2.9726 -3.291978,-2.9726 h -2.567251 c -0.528191,0 -0.94583,0.41764 -0.94583,0.94583 z m 1.891659,-3.39025 v -2.62867 h 1.461737 c 0.945829,0 1.535437,0.45449 1.535437,1.30206 v 0.0246 c 0,0.73701 -0.552757,1.30205 -1.498587,1.30205 z m -3.820309,0.71391 c 1.289767,0 2.309298,-0.42992 3.009457,-0.85985 0.442206,-0.25795 0.663309,-0.6633 0.663309,-1.20378 v -2.08819 c 0,-0.52819 -0.417639,-0.94583 -0.945829,-0.94583 h -2.161896 c -0.454489,0 -0.822994,0.3685 -0.822994,0.82299 0,0.45449 0.368505,0.81071 0.822994,0.81071 h 1.277484 v 1.22835 c -0.479057,0.34394 -1.080948,0.51591 -1.781107,0.51591 -1.523154,0 -2.604102,-1.15465 -2.604102,-2.72694 v -0.0246 c 0,-1.46173 1.093231,-2.6778 2.468983,-2.6778 0.822994,0 1.351185,0.20882 1.879375,0.58961 0.135119,0.0983 0.294804,0.19653 0.577325,0.19653 0.52819,0 0.933546,-0.40535 0.933546,-0.93354 0,-0.38079 -0.20882,-0.62646 -0.393072,-0.76158 -0.786144,-0.54047 -1.621422,-0.83528 -2.935756,-0.83528 -2.604102,0 -4.508045,2.00221 -4.508045,4.44663 v 0.0246 c 0,2.55497 1.842525,4.42206 4.520328,4.42206 z"
