@@ -106,13 +106,13 @@ jobs:
       - uses: actions/checkout@v6
       - name: Delete Development release
         run: |
-          gh release delete Development --cleanup-tag --yes
+          if gh release view Development >/dev/null 2>&1; then
+            gh release delete Development --cleanup-tag --yes
+          else
+            echo "No Development release found, nothing to delete"
+          fi
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
-      - uses: actions/download-artifact@v8
-        with:
-          path: _artifacts
-          token: ${{ secrets.WORKFLOW_PAT }}
       - name: Read dev log File
         id: read_devlog
         run: |
