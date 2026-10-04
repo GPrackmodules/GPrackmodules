@@ -104,6 +104,12 @@ jobs:
     needs: [build, build-mac]
     steps:
       - uses: actions/checkout@v6
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: _artifacts
+
       - name: Delete Development release
         run: |
           if gh release view Development >/dev/null 2>&1; then
@@ -113,6 +119,7 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
+
       - name: Read dev log File
         id: read_devlog
         run: |
@@ -122,6 +129,7 @@ jobs:
             cat docs/devlog.md
             echo "$EOF"
           } >> "$GITHUB_OUTPUT"
+
       - name: Create Development release
         uses: softprops/action-gh-release@v3
         with:
