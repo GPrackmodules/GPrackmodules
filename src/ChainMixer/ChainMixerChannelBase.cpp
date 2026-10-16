@@ -246,8 +246,10 @@ void ChainMixerChannelBase::ProcessAudioBuses(
 
 		if (bNeedStereo)
 		{
-			float fPanL = PanBalQuantity::GainFactorL(params[PanBalParam()].getValue(), false);
-			float fPanR = PanBalQuantity::GainFactorR(params[PanBalParam()].getValue(), false);
+			float fParamPanBal = params[PanBalParam()].getValue();
+			ApplyPanBalCV(fParamPanBal);
+			float fPanL = PanBalQuantity::GainFactorL(fParamPanBal, false);
+			float fPanR = PanBalQuantity::GainFactorR(fParamPanBal, false);
 			m_fadeMainStereo.Start(fFaderFactor * fPanL, fFaderFactor * fPanR);
 
 			m_fPreL = m_fPreR = fInL;
