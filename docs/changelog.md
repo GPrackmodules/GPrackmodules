@@ -1,9 +1,10 @@
 <h1>GPrackmodules Change Log</h1>
 
 <h2>Version 2.3.0</h2>
-t.b.d.
+Oct 19, 2026
 
   - Fixed missing audio in ChainMixer when modules were frshly inserted.
+  - Fixed panorama CV in Chain Mixer Extended Channel for mono inputs.
 
 
 <h2>Version 2.2.0</h2>
