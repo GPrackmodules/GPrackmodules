@@ -1,3 +1,10 @@
+<h2>Version 2.3.2</h2>
+Nov 21, 2026
+
+<h4>New Modules</h4>
+
+ *  Chained Mixer Separator - 1HP blank module to be used as a visual separator without braking the mixer chain.
+
 <h2>Version 2.3.1</h2>
 Oct 10, 2026
 

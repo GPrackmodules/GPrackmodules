@@ -6,6 +6,7 @@
 #include "ChainMixer/ChainMixerExtChannel.h"
 #include "ChainMixer/ChainMixerMain.h"
 #include "ChainMixer/ChainMixerAux.h"
+#include "ChainMixer/ChainMixerSeparator.h"
 #include "StereoChorus/StereoChorus.h"
 #include "Rotary/Rotary.h"
 #include "Clamp/Clamp.h"
@@ -13,6 +14,33 @@
 #include "PhraseSelect/PhraseSelect.h"
 
 Plugin* the_pPluginInstance;
+
+shared_ptr<Svg> NumberSvg(int nNumber)
+{
+	static shared_ptr<Svg> s_SvgsLight[NUMBER_SVG_NUMBERS + 1];
+	static shared_ptr<Svg> s_SvgsDark[NUMBER_SVG_NUMBERS + 1];
+	mutex s_mtxNumberSvgs;
+
+	lock_guard<mutex> lock(s_mtxNumberSvgs);
+	if (s_SvgsLight[0] == nullptr)
+	{
+		for (int i = 0; i < NUMBER_SVG_NUMBERS; i++)
+		{
+			std::stringstream ssLight;
+			ssLight << "res/Number" << i + 1 << ".svg";
+			s_SvgsLight[i] = Svg::load(asset::plugin(the_pPluginInstance, ssLight.str()));
+			std::stringstream ssDark;
+			ssDark << "res/Number" << i + 1 << "-dark.svg";
+			s_SvgsDark[i] = Svg::load(asset::plugin(the_pPluginInstance, ssDark.str()));
+		}
+		s_SvgsLight[NUMBER_SVG_NUMBERS] = Svg::load(asset::plugin(the_pPluginInstance, "res/NoNumber.svg"));
+		s_SvgsLight[NUMBER_SVG_NUMBERS] = Svg::load(asset::plugin(the_pPluginInstance, "res/NoNumber-dark.svg"));
+	}
+	nNumber--;
+	if (nNumber < 0 || nNumber >= NUMBER_SVG_NUMBERS || s_SvgsLight[nNumber] == nullptr)
+		return settings::preferDarkPanels ? s_SvgsDark[NUMBER_SVG_NUMBERS] : s_SvgsLight[NUMBER_SVG_NUMBERS];
+	return settings::preferDarkPanels ? s_SvgsDark[nNumber] : s_SvgsLight[nNumber];
+}
 
 int iround(float f)
 {
@@ -52,6 +80,8 @@ void init(Plugin* plugin)
 {
 	the_pPluginInstance = plugin;
 
+	auto pInitSingleton = NumberSvg(1);
+
 	// Add modules here
 	plugin->addModel(the_pAB4Model);
 	plugin->addModel(the_pAB8Model);
@@ -59,6 +89,7 @@ void init(Plugin* plugin)
 	plugin->addModel(the_pChainMixerExtChannelModel);
 	plugin->addModel(the_pChainMixerMainModel);
 	plugin->addModel(the_pChainMixerAuxModel);
+	plugin->addModel(the_pChainMixerSeparatorModel);
 	plugin->addModel(the_pStereoChorusModel);
 	plugin->addModel(the_pRotaryModel);
 	plugin->addModel(the_pClampModel);

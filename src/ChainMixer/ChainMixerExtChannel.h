@@ -3,7 +3,7 @@
 #include "ChainMixerCommon.h"
 #include "ChainMixerChannelBase.h"
 
-#define MAX_CHAINMIXER_ExtChannelS		16
+#define MAX_CHAINMIXER_EXTCHANNELS		NUMBER_SVG_NUMBERS
 
 /////////////////////////////////////////////////////
 /// Module
@@ -63,7 +63,7 @@ public:
 	//void SetSampleRate(float fSamplerate);
 	void process(const ProcessArgs& args) override;
 	void SetWidget(struct ChainMixerExtChannelWidget* pWidget) { m_pWidget = pWidget; }
-	bool Disabled() const override { return TypeInstance() > MAX_CHAINMIXER_ExtChannelS; }
+	bool Disabled() const override { return TypeInstance() > MAX_CHAINMIXER_EXTCHANNELS; }
 	void ProcessAudioBuses(	// called from main module's process() function
 		const ProcessArgs& args,
 		float* pMainL, float* pMainR,

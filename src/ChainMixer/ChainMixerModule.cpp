@@ -140,13 +140,8 @@ void ChainMixerModule::DetermineTypeInstance(const Model* pModel)
 		}
 		else
 		{
-			if (pNeighborModel == the_pChainMixerChannelModel)
-				continue;
-			if (pNeighborModel == the_pChainMixerMainModel)
-				continue;
-			if (pNeighborModel == the_pChainMixerAuxModel)
-				continue;
-			break;
+			if (dynamic_cast<ChainMixerModule*>(pModule) == nullptr)
+				break;
 		}
 	}
 	m_nTypeInstance = nSameTypeCount + 1;

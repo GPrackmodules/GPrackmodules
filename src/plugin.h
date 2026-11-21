@@ -18,11 +18,21 @@
 #endif
 #endif
 
+#ifndef M_PIf
+# define M_PIf		3.14159265358979323846f	/* pi */
+#endif
+#ifndef M_PI_2f
+# define M_PI_2f	1.57079632679489661923f	/* pi/2 */
+#endif
+
 using namespace std;
 using namespace rack;
 using namespace rack::engine;
 
 // Helpers
+#define NUMBER_SVG_NUMBERS	16
+extern shared_ptr<Svg> NumberSvg(int nNumber);
+
 extern int iround(float f);
 extern int iround(double d);
 extern int64_t i64round(float f);

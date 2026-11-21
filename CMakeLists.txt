@@ -68,6 +68,7 @@ target_sources(${RACK_PLUGIN_LIB} PRIVATE
 	src/ChainMixer/ChainMixerExtChannel.cpp
 	src/ChainMixer/ChainMixerMain.cpp
 	src/ChainMixer/ChainMixerAux.cpp
+	src/ChainMixer/ChainMixerSeparator.cpp
 	src/StereoChorus/StereoChorus.cpp
 	src/StereoChorus/ChorusDelayLine.cpp
 	src/Rotary/Rotary.cpp

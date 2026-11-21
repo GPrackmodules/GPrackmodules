@@ -5,34 +5,6 @@
 #include "Knobs.h"
 #include "MenuSlider.h"
 
-
-static shared_ptr<Svg> NumberSvg(int nNumber)
-{
-	static shared_ptr<Svg> s_SvgsLight[MAX_CHAINMIXER_ExtChannelS + 1];
-	static shared_ptr<Svg> s_SvgsDark[MAX_CHAINMIXER_ExtChannelS + 1];
-	mutex s_mtxNumberSvgs;
-
-	lock_guard<mutex> lock(s_mtxNumberSvgs);
-	if (s_SvgsLight[0] == nullptr)
-	{
-		for (int i = 0; i < MAX_CHAINMIXER_ExtChannelS; i++)
-		{
-			std::stringstream ssLight;
-			ssLight << "res/Number" << i + 1 << ".svg";
-			s_SvgsLight[i] = Svg::load(asset::plugin(the_pPluginInstance, ssLight.str()));
-			std::stringstream ssDark;
-			ssDark << "res/Number" << i + 1 << "-dark.svg";
-			s_SvgsDark[i] = Svg::load(asset::plugin(the_pPluginInstance, ssDark.str()));
-		}
-		s_SvgsLight[MAX_CHAINMIXER_ExtChannelS] = Svg::load(asset::plugin(the_pPluginInstance, "res/NoNumber.svg"));
-		s_SvgsLight[MAX_CHAINMIXER_ExtChannelS] = Svg::load(asset::plugin(the_pPluginInstance, "res/NoNumber-dark.svg"));
-	}
-	nNumber--;
-	if (nNumber < 0 || nNumber >= MAX_CHAINMIXER_ExtChannelS || s_SvgsLight[nNumber] == nullptr)
-		return settings::preferDarkPanels ? s_SvgsDark[MAX_CHAINMIXER_ExtChannelS] : s_SvgsLight[MAX_CHAINMIXER_ExtChannelS];
-	return settings::preferDarkPanels ? s_SvgsDark[nNumber] : s_SvgsLight[nNumber];
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// MODULE
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,8 +45,6 @@ ChainMixerExtChannelModule::ChainMixerExtChannelModule() :
 
 	configOutput(OutputDirectL, "Left direct");
 	configOutput(OutputDirectR, "Right direct");
-
-	shared_ptr<Svg> pForceInitializationOfSingleton = NumberSvg(1);
 }
 
 void ChainMixerExtChannelModule::process(const ProcessArgs& args) /*override*/

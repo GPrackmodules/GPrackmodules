@@ -2,7 +2,7 @@
 
 #include "ChainMixerChannelBase.h"
 
-#define MAX_CHAINMIXER_CHANNELS		16
+#define MAX_CHAINMIXER_CHANNELS		NUMBER_SVG_NUMBERS
 
 /////////////////////////////////////////////////////
 /// Module

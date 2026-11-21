@@ -38,7 +38,8 @@ public:
 		Channel,
 		ExtChannel,
 		Main,
-		Aux
+		Aux,
+		Separator
 	};
 
 /////////////////////////////////////

@@ -51,6 +51,18 @@ public:
 	FilledKnob14mm() : FilledKnob(14) {};
 };
 
+class FilledKnob11mm : public FilledKnob
+{
+public:
+	FilledKnob11mm() : FilledKnob(11) {};
+};
+
+class FilledKnob10mm : public FilledKnob
+{
+public:
+	FilledKnob10mm() : FilledKnob(10) {};
+};
+
 class PointyKnob8mm : public PointyKnob
 {
 public:
