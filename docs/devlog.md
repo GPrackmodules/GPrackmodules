@@ -16,6 +16,4 @@ Oct 10, 2026
 
  * Chain Mixer Extended Channel: fixed Panorama / Balance CV input for mono input signals
 
-None at this time.
-
 
